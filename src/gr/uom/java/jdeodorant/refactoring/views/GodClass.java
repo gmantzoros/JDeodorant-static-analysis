@@ -107,6 +107,7 @@ public class GodClass extends ViewPart {
 	private Action doubleClickAction;
 	private Action saveResultsAction;
 	private Action packageExplorerAction;
+	private Action exportIdentifyJsonAction; //my action for exporting json file with static analysis
 	private ExtractClassCandidateGroup[] candidateRefactoringTable;
 	private IJavaProject selectedProject;
 	private IJavaProject activeProject;
@@ -292,6 +293,7 @@ public class GodClass extends ViewPart {
 					/*if(candidateRefactoringTable != null)
 						tableViewer.remove(candidateRefactoringTable);*/
 					identifyBadSmellsAction.setEnabled(true);
+					exportIdentifyJsonAction.setEnabled(true);
 				}
 			}
 		}
@@ -483,6 +485,29 @@ public class GodClass extends ViewPart {
 			}
 			public void widgetDefaultSelected(SelectionEvent arg) {}
 		});
+		// --- NEW: Export Identify JSON ---
+		MenuItem exportJsonItem = new MenuItem(popupMenu, SWT.NONE);
+		exportJsonItem.setText("Export Identify JSON");
+		exportJsonItem.addSelectionListener(new SelectionListener() {
+		    @Override
+		    public void widgetSelected(SelectionEvent e) {
+		        try {
+		            // call the exporter with the selected candidate
+		            gr.uom.java.jdeodorant.refactoring.export.IdentifyPreviewExporter.exportCandidate(candidateRefactoring);
+		            MessageDialog.openInformation(
+		                treeViewer.getControl().getShell(),
+		                "JDeodorant",
+		                "Identify preview JSON exported to <project>/jdeodorant_cards/");
+		        } catch (Exception ex) {
+		            MessageDialog.openError(
+		                treeViewer.getControl().getShell(),
+		                "JDeodorant",
+		                "Export failed: " + ex.getMessage());
+		        }
+		    }
+		    @Override
+		    public void widgetDefaultSelected(SelectionEvent e) { /* no-op */ }
+		});
 		popupMenu.setVisible(false);
 		return popupMenu;
 	}
@@ -497,6 +522,7 @@ public class GodClass extends ViewPart {
 		manager.add(applyRefactoringAction);
 		manager.add(saveResultsAction);
 		manager.add(packageExplorerAction);
+		manager.add(exportIdentifyJsonAction); // button for giving me the json export option
 	}
 
 	private void makeActions() {
@@ -699,6 +725,48 @@ public class GodClass extends ViewPart {
 				}
 			}
 		};
+		
+		// define my new action
+		exportIdentifyJsonAction = new Action("Export Identify JSON") {
+		    @Override
+		    public void run() {
+		        IStructuredSelection sel = (IStructuredSelection) treeViewer.getSelection();
+		        if (sel == null || sel.isEmpty() || !(sel.getFirstElement() instanceof ExtractClassCandidateRefactoring)) {
+		            MessageDialog.openInformation(
+		                treeViewer.getControl().getShell(),
+		                "JDeodorant",
+		                "Please select a specific Extract Class candidate (leaf row) and try again.");
+		            return;
+		        }
+
+		        ExtractClassCandidateRefactoring cand = (ExtractClassCandidateRefactoring) sel.getFirstElement();
+
+		        // Find the candidate group (all candidates for the class) → export ONE JSON per class
+		        ExtractClassCandidateGroup group = getParentCandidateGroup(cand.getSource());
+		        if (group == null) {
+		            MessageDialog.openError(
+		                treeViewer.getControl().getShell(),
+		                "JDeodorant",
+		                "Could not find candidate group for the selected class.");
+		            return;
+		        }
+
+		        try {
+		            gr.uom.java.jdeodorant.refactoring.export.IdentifyPreviewExporter.exportGroup(group);
+		            MessageDialog.openInformation(
+		                treeViewer.getControl().getShell(),
+		                "JDeodorant",
+		                "Identify preview JSON exported to <project>/jdeodorant_cards/ (one file per class).");
+		        } catch (Exception e) {
+		            MessageDialog.openError(
+		                treeViewer.getControl().getShell(),
+		                "JDeodorant",
+		                "Export failed: " + e.getMessage());
+		        }
+		    }
+		};
+		exportIdentifyJsonAction.setToolTipText("Export JSON (Identify preview) for the selected class (aggregates all candidates)");
+		exportIdentifyJsonAction.setEnabled(false);
 	}
 
 	private void hookDoubleClickAction() {
