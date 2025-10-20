@@ -128,25 +128,128 @@ public class MethodContext {
         }
         return classes;
     }
-
-    // --- Getters ---
-
-    public String getName() { return name; }
-    public String getClassName() { return className; }
-    public String getSignature() { return signature; }
-    public List<ParameterObject> getParameters() { return parameters; }
-    public List<FieldInstructionObject> getAccessedFields() { return accessedFields; }
-    public List<MethodInvocationObject> getCalledMethods() { return calledMethods; }
-    public boolean isGetter() { return isGetter; }
-    public boolean isSetter() { return isSetter; }
-    public boolean isDelegate() { return isDelegate; }
-    public boolean isCollectionAdder() { return isCollectionAdder; }
-
-    public MethodObject getMethodObject() { return methodObject; }
-
+    
     @Override
     public String toString() {
         return String.format("%s::%s(%d params)", className, name, parameters.size());
     }
+    
+ // --- Getters ---
+
+	public String getName() {
+		return name;
+	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	public String getSignature() {
+		return signature;
+	}
+
+	public TypeObject getReturnType() {
+		return returnType;
+	}
+
+	public Access getAccessModifier() {
+		return accessModifier;
+	}
+
+	public boolean isAbstract() {
+		return isAbstract;
+	}
+
+	public boolean isStatic() {
+		return isStatic;
+	}
+
+	public boolean isSynchronized() {
+		return isSynchronized;
+	}
+
+	public boolean isNative() {
+		return isNative;
+	}
+
+	public boolean isTestMethod() {
+		return isTestMethod;
+	}
+
+	public List<ParameterObject> getParameters() {
+		return parameters;
+	}
+
+	public MethodBodyObject getBody() {
+		return body;
+	}
+
+	public List<CommentObject> getComments() {
+		return comments;
+	}
+
+	public List<FieldInstructionObject> getAccessedFields() {
+		return accessedFields;
+	}
+
+	public List<MethodInvocationObject> getCalledMethods() {
+		return calledMethods;
+	}
+
+	public List<SuperMethodInvocationObject> getSuperCalls() {
+		return superCalls;
+	}
+
+	public List<ConstructorInvocationObject> getConstructorCalls() {
+		return constructorCalls;
+	}
+
+	public List<CreationObject> getCreatedObjects() {
+		return createdObjects;
+	}
+
+	public Set<PlainVariable> getDeclaredLocals() {
+		return declaredLocals;
+	}
+
+	public Set<PlainVariable> getUsedLocals() {
+		return usedLocals;
+	}
+
+	public Set<PlainVariable> getDefinedLocals() {
+		return definedLocals;
+	}
+
+	public boolean isGetter() {
+		return isGetter;
+	}
+
+	public boolean isSetter() {
+		return isSetter;
+	}
+
+	public boolean isDelegate() {
+		return isDelegate;
+	}
+
+	public boolean isCollectionAdder() {
+		return isCollectionAdder;
+	}
+
+	public boolean isOverridesMethod() {
+		return overridesMethod;
+	}
+
+	public Set<String> getInvokedExternalClasses() {
+		return invokedExternalClasses;
+	}
+
+	public Set<String> getAccessedFieldClasses() {
+		return accessedFieldClasses;
+	}
+
+	public MethodObject getMethodObject() {
+		return methodObject;
+	}
 }
 

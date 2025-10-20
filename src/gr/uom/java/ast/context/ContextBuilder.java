@@ -2,7 +2,6 @@ package gr.uom.java.ast.context;
 
 import gr.uom.java.ast.*;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jdt.core.ITypeRoot;
 

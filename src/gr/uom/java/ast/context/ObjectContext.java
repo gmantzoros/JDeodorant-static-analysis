@@ -64,39 +64,59 @@ public class ObjectContext {
             String sourceName = source.getName();
             Set<String> deps = new HashSet<>();
 
-            // Add superclass and interfaces
+            // --- Superclass and interfaces ---
             if (source.getSuperclass() != null)
                 deps.add(source.getSuperclass().getClassType());
             ListIterator<TypeObject> itfIter = source.getInterfaceIterator();
             while (itfIter.hasNext())
                 deps.add(itfIter.next().getClassType());
 
-            // Check field types
+            // --- Field types ---
             ListIterator<FieldObject> fieldIt = source.getFieldIterator();
             while (fieldIt.hasNext()) {
                 FieldObject f = fieldIt.next();
-                deps.add(f.getType().getClassType());
+                if (f.getType() != null)
+                    deps.add(f.getType().getClassType());
             }
 
-            // Check method parameter and return types
+            // --- Method dependencies ---
             ListIterator<MethodObject> methodIt = source.getMethodIterator();
             while (methodIt.hasNext()) {
                 MethodObject m = methodIt.next();
+
+                // Return & parameter types
                 if (m.getReturnType() != null)
                     deps.add(m.getReturnType().getClassType());
                 ListIterator<ParameterObject> paramIt = m.getParameterListIterator();
-                while (paramIt.hasNext())
-                    deps.add(paramIt.next().getType().getClassType());
+                while (paramIt.hasNext()) {
+                    ParameterObject p = paramIt.next();
+                    if (p.getType() != null)
+                        deps.add(p.getType().getClassType());
+                }
+
+                // Method call dependencies
+                for (MethodInvocationObject mio : m.getMethodInvocations()) {
+                    String targetClass = mio.getOriginClassName();
+                    if (targetClass != null && !targetClass.equals(sourceName)) {
+                        deps.add(targetClass);
+                    }
+                }
+
+                // Constructor (object creation) dependencies
+                for (CreationObject c : m.getCreations()) {
+                    if (c.getType() != null)
+                        deps.add(c.getType().getClassType());
+                }
             }
 
-            // Record dependencies
+            // --- Record dependencies ---
             classDependencies.put(sourceName, deps);
             for (String target : deps) {
                 classDependents.computeIfAbsent(target, k -> new HashSet<>()).add(sourceName);
             }
         }
 
-        // Compute fan-in and fan-out
+        // --- Compute fan-in and fan-out ---
         for (String className : classDependencies.keySet()) {
             Set<String> deps = classDependencies.getOrDefault(className, Collections.emptySet());
             fanOutMap.put(className, deps.size());
@@ -106,6 +126,7 @@ public class ObjectContext {
             fanInMap.put(className, dependents.size());
         }
     }
+
 
     // --- Getters ---
 
