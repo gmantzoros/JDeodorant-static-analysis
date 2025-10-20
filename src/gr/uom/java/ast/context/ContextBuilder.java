@@ -4,6 +4,7 @@ import gr.uom.java.ast.*;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jdt.core.ITypeRoot;
 
 /**
  * Helper class that builds an ObjectContext from the currently loaded
@@ -36,18 +37,49 @@ public class ContextBuilder {
         return objectContext;
     }
 
-    private static void attachSourceCode(SystemObject system, ObjectContext context) {
+    public static void attachSourceCode(SystemObject system, ObjectContext context) {
         for (ClassContext ctx : context.getClassContexts()) {
             ClassObject classObj = system.getClassObject(ctx.getClassName());
-            if (classObj != null && classObj.getIFile() != null) {
-                try (InputStream input = classObj.getIFile().getContents()) {
-                    String source = new String(((IFile) input).readAllBytes(), StandardCharsets.UTF_8);
-                    ctx.setSourceCode(source);
-                } catch (Exception e) {
-                    System.err.println("[ContextBuilder] Failed to read source for class: " + ctx.getClassName());
+            if (classObj == null) continue;
+
+            // Preferred: JDT buffer from ITypeRoot
+            try {
+                ITypeRoot typeRoot = classObj.getITypeRoot();
+                if (typeRoot != null && typeRoot.getBuffer() != null) {
+                    String src = typeRoot.getBuffer().getContents();
+                    if (src != null) {
+                        ctx.setSourceCode(src);
+                        continue; // done for this class
+                    }
                 }
+            } catch (Exception ignore) {
+                // fall through to IFile
+            }
+
+            // Fallback: read contents from the IFile
+            try {
+                IFile file = classObj.getIFile();
+                if (file != null && file.exists()) {
+                    try (InputStream in = file.getContents(true)) {
+                        String src = new String(readAllBytesCompat(in), java.nio.charset.StandardCharsets.UTF_8);
+                        ctx.setSourceCode(src);
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("[ContextBuilder] Failed to read source for class: " + ctx.getClassName());
             }
         }
+    }
+
+    // Java 8–compatible readAllBytes for plug-ins
+    private static byte[] readAllBytesCompat(InputStream in) throws java.io.IOException {
+        java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+        byte[] buf = new byte[8192];
+        int n;
+        while ((n = in.read(buf)) != -1) {
+            baos.write(buf, 0, n);
+        }
+        return baos.toByteArray();
     }
 
     /**

@@ -15,6 +15,7 @@
                   name="sampleGroup">
             </separator>
          </menu>
+
          <action
                class="gr.uom.java.jdeodorant.refactoring.actions.BadSmellsMenu"
                icon="icons/repair.png"
@@ -55,8 +56,20 @@
                menubarPath="BadSmellsMenu/sampleGroup"
                id="gr.uom.java.jdeodorant.actions.DuplicatedCode">
          </action>
+
+         <!--  NEW ACTION: Generate Context -->
+         <action
+               label="Generate Context"
+               icon="icons/repair.png"
+               class="gr.uom.java.jdeodorant.refactoring.actions.GenerateContextAction"
+               tooltip="Builds ObjectContext for current project"
+               menubarPath="BadSmellsMenu/sampleGroup"
+               id="gr.uom.java.jdeodorant.actions.GenerateContext">
+         </action>
+
       </actionSet>
    </extension>
+
    <extension
          point="org.eclipse.ui.views">
       <category
@@ -113,6 +126,7 @@
             name="Code Smell Package Explorer">
       </view>
    </extension>
+
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
@@ -161,6 +175,7 @@
          </view>
       </perspectiveExtension>
    </extension>
+
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -169,12 +184,14 @@
             name="JDeodorant">
       </page>
    </extension>
+
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
             class="gr.uom.java.jdeodorant.preferences.PreferenceInitializer">
       </initializer>
    </extension>
+
    <extension
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
       <specification
@@ -228,6 +245,7 @@
             verticalRulerPreferenceValue="false">
       </specification>
    </extension>
+
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
@@ -251,4 +269,5 @@
          </action>
       </objectContribution>
    </extension>
+
 </plugin>
