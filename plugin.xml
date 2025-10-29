@@ -125,6 +125,12 @@
             id="gr.uom.java.jdeodorant.views.CodeSmellPackageExplorer"
             name="Code Smell Package Explorer">
       </view>
+      <view
+    			id="gr.uom.java.jdeodorant.refactoring.views.ContextView"
+    			name="Context View"
+    			class="gr.uom.java.jdeodorant.refactoring.views.ContextView"
+    			category="gr.uom.java.jdeodorant.refactoring.views.category" />
+      
    </extension>
 
    <extension

@@ -8,15 +8,13 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-
+import org.eclipse.ui.*;
 import gr.uom.java.ast.context.ContextBuilder;
-import gr.uom.java.ast.context.ContextDumper;
 import gr.uom.java.ast.context.ObjectContext;
+import gr.uom.java.jdeodorant.refactoring.views.ContextView;
 
 /**
- * Eclipse menu action that builds and dumps the ObjectContext
+ * Eclipse menu action that builds and displays the ObjectContext
  * for the currently selected Java project using ContextBuilder.
  */
 public class GenerateContextAction implements IWorkbenchWindowActionDelegate {
@@ -30,7 +28,8 @@ public class GenerateContextAction implements IWorkbenchWindowActionDelegate {
 
     @Override
     public void run(IAction action) {
-        if (window == null) return;
+        if (window == null)
+            return;
 
         try {
             ISelection selection = window.getSelectionService().getSelection();
@@ -53,20 +52,30 @@ public class GenerateContextAction implements IWorkbenchWindowActionDelegate {
             System.out.println("[GenerateContextAction] Starting context generation for project: " + project.getName());
             System.out.println("========================================");
 
-            // Build full project context
+            // --- Build the project context ---
             ObjectContext context = ContextBuilder.buildCurrentProjectContext();
             if (context == null) {
                 MessageDialog.openWarning(window.getShell(), "Generate Context",
-                        "❌ Failed to build ObjectContext for project: " + project.getName());
+                        "Failed to build ObjectContext for project: " + project.getName());
                 return;
             }
 
-            // Dump results
-            ContextDumper.dump(context, project.getName());
+            // --- Show the context in Eclipse view ---
+            IWorkbenchPage page = window.getActivePage();
+            if (page != null) {
+                try {
+                    ContextView view = (ContextView) page.showView(ContextView.ID);
+                    view.setObjectContext(context);
+                } catch (PartInitException e) {
+                    e.printStackTrace();
+                    MessageDialog.openError(window.getShell(), "View Error",
+                            "Could not open the Context View: " + e.getMessage());
+                }
+            }
 
-            System.out.println("[GenerateContextAction] Context successfully dumped for: " + project.getName());
+            System.out.println("[GenerateContextAction] Context successfully generated and displayed for: " + project.getName());
             MessageDialog.openInformation(window.getShell(), "Generate Context",
-                    "Context successfully built and dumped!\n\nProject: " + project.getName());
+                    "Context successfully built, and displayed!\n\nProject: " + project.getName());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,11 +114,13 @@ public class GenerateContextAction implements IWorkbenchWindowActionDelegate {
                 return ((IResource) first).getProject();
 
             if (first instanceof IAdaptable) {
-                IResource r = ((IAdaptable) first).getAdapter(IResource.class);
-                if (r != null) return r.getProject();
+                IResource r = (IResource) ((IAdaptable) first).getAdapter(IResource.class);
+                if (r != null)
+                    return r.getProject();
 
-                IJavaElement je = ((IAdaptable) first).getAdapter(IJavaElement.class);
-                if (je != null) return je.getJavaProject().getProject();
+                IJavaElement je = (IJavaElement) ((IAdaptable) first).getAdapter(IJavaElement.class);
+                if (je != null)
+                    return je.getJavaProject().getProject();
             }
         }
         return null;
