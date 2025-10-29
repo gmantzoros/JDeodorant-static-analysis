@@ -3,9 +3,7 @@ package gr.uom.java.jdeodorant.refactoring.actions;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -13,15 +11,13 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-import gr.uom.java.ast.ASTReader;
-import gr.uom.java.ast.SystemObject;
-import gr.uom.java.ast.context.ObjectContext;
 import gr.uom.java.ast.context.ContextBuilder;
 import gr.uom.java.ast.context.ContextDumper;
+import gr.uom.java.ast.context.ObjectContext;
 
 /**
- * Menu action that rebuilds the AST for the
- * currently selected project, constructs ObjectContext, and dumps it to a file.
+ * Eclipse menu action that builds and dumps the ObjectContext
+ * for the currently selected Java project using ContextBuilder.
  */
 public class GenerateContextAction implements IWorkbenchWindowActionDelegate {
 
@@ -42,77 +38,76 @@ public class GenerateContextAction implements IWorkbenchWindowActionDelegate {
 
             if (project == null) {
                 MessageDialog.openInformation(window.getShell(), "Generate Context",
-                        "Please select a project in the Package Explorer.");
+                        "Please select a Java project in the Package Explorer.");
                 return;
             }
 
-            // Build IJavaProject and force an AST rebuild
             IJavaProject javaProject = JavaCore.create(project);
             if (javaProject == null || !javaProject.exists()) {
                 MessageDialog.openInformation(window.getShell(), "Generate Context",
-                        "The selected project is not a Java project.");
+                        "The selected project is not a valid Java project.");
                 return;
             }
 
-            System.out.println("[GenerateContextAction] Rebuilding AST for: " + project.getName());
-            new ASTReader(javaProject, /* IProgressMonitor */ null);
-            SystemObject system = ASTReader.getSystemObject();
+            System.out.println("========================================");
+            System.out.println("[GenerateContextAction] Starting context generation for project: " + project.getName());
+            System.out.println("========================================");
 
-            if (system == null) {
-                MessageDialog.openInformation(window.getShell(), "Generate Context",
-                        "Failed to build AST for this project.");
+            // Build full project context
+            ObjectContext context = ContextBuilder.buildCurrentProjectContext();
+            if (context == null) {
+                MessageDialog.openWarning(window.getShell(), "Generate Context",
+                        "❌ Failed to build ObjectContext for project: " + project.getName());
                 return;
             }
 
-            MessageDialog.openInformation(window.getShell(), "Generate Context", "Building ObjectContext...");
-            ObjectContext context = new ObjectContext(system);
-
-            // Attach source code
-            ContextBuilder.attachSourceCode(system, context);
-
-            //Dump info to .txt file
+            // Dump results
             ContextDumper.dump(context, project.getName());
+
+            System.out.println("[GenerateContextAction] Context successfully dumped for: " + project.getName());
             MessageDialog.openInformation(window.getShell(), "Generate Context",
-                    "Context built successfully!\n\nFile saved.");
+                    "Context successfully built and dumped!\n\nProject: " + project.getName());
 
         } catch (Exception e) {
             e.printStackTrace();
-            MessageDialog.openError(window.getShell(), "Context Generation Error", e.getMessage());
+            MessageDialog.openError(window.getShell(), "Context Generation Error",
+                    e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
 
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
-        // No-op
+        // no-op
     }
 
     @Override
     public void dispose() {
-        // No-op
+        // no-op
     }
 
     /**
-     * Resolve the selected project from various selection types.
+     * Resolves the currently selected project from different selection types.
      */
     private IProject getSelectedProject(ISelection selection) {
         if (selection instanceof IStructuredSelection) {
             Object first = ((IStructuredSelection) selection).getFirstElement();
 
-            if (first instanceof IProject) {
+            if (first instanceof IProject)
                 return (IProject) first;
-            }
-            if (first instanceof IJavaProject) {
+
+            if (first instanceof IJavaProject)
                 return ((IJavaProject) first).getProject();
-            }
-            if (first instanceof IJavaElement) {
+
+            if (first instanceof IJavaElement)
                 return ((IJavaElement) first).getJavaProject().getProject();
-            }
-            if (first instanceof IResource) {
+
+            if (first instanceof IResource)
                 return ((IResource) first).getProject();
-            }
+
             if (first instanceof IAdaptable) {
                 IResource r = ((IAdaptable) first).getAdapter(IResource.class);
                 if (r != null) return r.getProject();
+
                 IJavaElement je = ((IAdaptable) first).getAdapter(IJavaElement.class);
                 if (je != null) return je.getJavaProject().getProject();
             }

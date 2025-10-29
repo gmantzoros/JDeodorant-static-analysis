@@ -4,22 +4,19 @@ import gr.uom.java.ast.*;
 import java.util.*;
 
 /**
- * ObjectContext provides a global view of a system analyzed by JDeodorant.
- * It aggregates ClassContext objects and captures inter-class relationships,
- * allowing higher-level reasoning about dependencies and refactoring opportunities.
+ * ObjectContext provides a lightweight container for all contextual information
+ * derived from JDeodorant’s AST analysis.
  */
 public class ObjectContext {
 
     private final SystemObject systemObject;
-    private final List<ClassContext> classContexts;
-    private final Map<String, Set<String>> classDependencies; // class -> classes it depends on
-    private final Map<String, Set<String>> classDependents;   // class -> classes depending on it
+    private List<ClassContext> classContexts;
+
+    // Optional dependency maps (can be filled by builder later)
+    private final Map<String, Set<String>> classDependencies;
+    private final Map<String, Set<String>> classDependents;
     private final Map<String, Integer> fanInMap;
     private final Map<String, Integer> fanOutMap;
-
-    private final int totalClasses;
-    private final int totalMethods;
-    private final int totalFields;
 
     public ObjectContext(SystemObject systemObject) {
         this.systemObject = systemObject;
@@ -28,107 +25,39 @@ public class ObjectContext {
         this.classDependents = new HashMap<>();
         this.fanInMap = new HashMap<>();
         this.fanOutMap = new HashMap<>();
-
-        extractClassContexts();
-        analyzeDependencies();
-
-        // Inject fan-in/out values into each class metrics
-        for (ClassContext ctx : classContexts) {
-            MetricsContext metrics = ctx.getMetricsContext();
-            metrics.setFanIn(getFanIn(ctx.getClassName()));
-            metrics.setFanOut(getFanOut(ctx.getClassName()));
-        }
-
-        this.totalClasses = classContexts.size();
-        this.totalMethods = classContexts.stream()
-                .mapToInt(c -> c.getMethodContexts().size())
-                .sum();
-        this.totalFields = classContexts.stream()
-                .mapToInt(c -> c.getFieldContexts().size())
-                .sum();
     }
 
-    // --- Extraction phase ---
+    // --- Setters (used by ContextBuilder) ---
 
-    private void extractClassContexts() {
-        for (ClassObject cls : systemObject.getClassObjects()) {
-            ClassContext ctx = new ClassContext(cls);
-            classContexts.add(ctx);
-        }
+    public void setClassContexts(List<ClassContext> classContexts) {
+        this.classContexts = classContexts;
     }
 
-    // --- Relationship analysis ---
-
-    private void analyzeDependencies() {
-        for (ClassObject source : systemObject.getClassObjects()) {
-            String sourceName = source.getName();
-            Set<String> deps = new HashSet<>();
-
-            // --- Superclass and interfaces ---
-            if (source.getSuperclass() != null)
-                deps.add(source.getSuperclass().getClassType());
-            ListIterator<TypeObject> itfIter = source.getInterfaceIterator();
-            while (itfIter.hasNext())
-                deps.add(itfIter.next().getClassType());
-
-            // --- Field types ---
-            ListIterator<FieldObject> fieldIt = source.getFieldIterator();
-            while (fieldIt.hasNext()) {
-                FieldObject f = fieldIt.next();
-                if (f.getType() != null)
-                    deps.add(f.getType().getClassType());
-            }
-
-            // --- Method dependencies ---
-            ListIterator<MethodObject> methodIt = source.getMethodIterator();
-            while (methodIt.hasNext()) {
-                MethodObject m = methodIt.next();
-
-                // Return & parameter types
-                if (m.getReturnType() != null)
-                    deps.add(m.getReturnType().getClassType());
-                ListIterator<ParameterObject> paramIt = m.getParameterListIterator();
-                while (paramIt.hasNext()) {
-                    ParameterObject p = paramIt.next();
-                    if (p.getType() != null)
-                        deps.add(p.getType().getClassType());
-                }
-
-                // Method call dependencies
-                for (MethodInvocationObject mio : m.getMethodInvocations()) {
-                    String targetClass = mio.getOriginClassName();
-                    if (targetClass != null && !targetClass.equals(sourceName)) {
-                        deps.add(targetClass);
-                    }
-                }
-
-                // Constructor (object creation) dependencies
-                for (CreationObject c : m.getCreations()) {
-                    if (c.getType() != null)
-                        deps.add(c.getType().getClassType());
-                }
-            }
-
-            // --- Record dependencies ---
-            classDependencies.put(sourceName, deps);
-            for (String target : deps) {
-                classDependents.computeIfAbsent(target, k -> new HashSet<>()).add(sourceName);
-            }
-        }
-
-        // --- Compute fan-in and fan-out ---
-        for (String className : classDependencies.keySet()) {
-            Set<String> deps = classDependencies.getOrDefault(className, Collections.emptySet());
-            fanOutMap.put(className, deps.size());
-        }
-        for (String className : classDependents.keySet()) {
-            Set<String> dependents = classDependents.getOrDefault(className, Collections.emptySet());
-            fanInMap.put(className, dependents.size());
-        }
+    public void setClassDependencies(Map<String, Set<String>> classDependencies) {
+        this.classDependencies.clear();
+        this.classDependencies.putAll(classDependencies);
     }
 
+    public void setClassDependents(Map<String, Set<String>> classDependents) {
+        this.classDependents.clear();
+        this.classDependents.putAll(classDependents);
+    }
+
+    public void setFanInMap(Map<String, Integer> fanInMap) {
+        this.fanInMap.clear();
+        this.fanInMap.putAll(fanInMap);
+    }
+
+    public void setFanOutMap(Map<String, Integer> fanOutMap) {
+        this.fanOutMap.clear();
+        this.fanOutMap.putAll(fanOutMap);
+    }
 
     // --- Getters ---
+
+    public SystemObject getSystemObject() {
+        return systemObject;
+    }
 
     public List<ClassContext> getClassContexts() {
         return Collections.unmodifiableList(classContexts);
@@ -142,33 +71,38 @@ public class ObjectContext {
         return Collections.unmodifiableMap(classDependents);
     }
 
-    public int getFanIn(String className) {
-        return fanInMap.getOrDefault(className, 0);
+    public Map<String, Integer> getFanInMap() {
+        return Collections.unmodifiableMap(fanInMap);
     }
 
-    public int getFanOut(String className) {
-        return fanOutMap.getOrDefault(className, 0);
+    public Map<String, Integer> getFanOutMap() {
+        return Collections.unmodifiableMap(fanOutMap);
     }
+
+    // --- Convenience methods ---
 
     public int getTotalClasses() {
-        return totalClasses;
+        return classContexts.size();
     }
 
     public int getTotalMethods() {
-        return totalMethods;
+        return classContexts.stream()
+                .mapToInt(c -> c.getMethodContexts().size())
+                .sum();
     }
 
     public int getTotalFields() {
-        return totalFields;
+        return classContexts.stream()
+                .mapToInt(c -> c.getFieldContexts().size())
+                .sum();
     }
 
     @Override
     public String toString() {
         return "ObjectContext[" +
-                "classes=" + totalClasses +
-                ", methods=" + totalMethods +
-                ", fields=" + totalFields +
+                "classes=" + getTotalClasses() +
+                ", methods=" + getTotalMethods() +
+                ", fields=" + getTotalFields() +
                 "]";
     }
 }
-

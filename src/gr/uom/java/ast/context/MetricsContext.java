@@ -2,38 +2,44 @@ package gr.uom.java.ast.context;
 
 import gr.uom.java.ast.*;
 import gr.uom.java.ast.metrics.*;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * Encapsulates structural and software metrics for a single class.
- * Uses JDeodorant's metric subsystem: ConnectivityMetric, LCOM, and MMImportCoupling.
+ * Integrates JDeodorant metric subsystem (LCOM3, Connectivity, CBO)
+ * and contextual fan-in / fan-out metrics.
  */
 public class MetricsContext {
 
-    private int nom;        // Number of Methods
-    private int noc;        // Number of Children
-    private double wmc;     // Weighted Methods per Class (simplified)
-    private double cbo;     // Coupling Between Objects
-    private double lcom;    // Lack of Cohesion in Methods (LCOM3)
-    private double connectivity; // From ConnectivityMetric
-    private int fanIn;      // Classes depending on this class
-    private int fanOut;     // Classes this class depends on
+    private final int nom;          // Number of Methods
+    private final int noc;          // Number of Children (subclasses)
+    private final double cbo;       // Coupling Between Objects
+    private final double lcom;      // Lack of Cohesion in Methods (LCOM3)
+    private final double connectivity; // From ConnectivityMetric
+    private int fanIn;              // Classes depending on this class
+    private int fanOut;             // Classes this class depends on
 
     public MetricsContext(ClassObject classObject) {
-        if (classObject == null) return;
+        if (classObject == null) {
+            this.nom = 0;
+            this.noc = 0;
+            this.cbo = 0.0;
+            this.lcom = 0.0;
+            this.connectivity = 0.0;
+            return;
+        }
 
         SystemObject system = ASTReader.getSystemObject();
         this.nom = classObject.getNumberOfMethods();
-        this.noc = countSubclasses(classObject);
+        this.noc = countSubclasses(classObject, system);
 
-        // Default WMC: number of methods (simple)
-        this.wmc = nom;
+        double cboTmp = 0.0;
+        double lcomTmp = 0.0;
+        double connTmp = 0.0;
 
-        // --- Compute real metrics if possible ---
         try {
-            // LCOM and Connectivity are class-level metrics
+            // --- Compute metrics using JDeodorant metric classes ---
             LCOM lcomMetric = new LCOM(system);
             ConnectivityMetric connMetric = new ConnectivityMetric(system);
             MMImportCoupling couplingMetric = new MMImportCoupling(system);
@@ -42,21 +48,24 @@ public class MetricsContext {
             Map<String, Double> connectivityMap = getField(connMetric, "classCohesionMap");
             Map<String, ?> importCouplingMap = getField(couplingMetric, "importCouplingMap");
 
-            this.lcom = safeGet(lcom3Map, classObject.getName());
-            this.connectivity = safeGet(connectivityMap, classObject.getName());
-            this.cbo = computeCBO(importCouplingMap, classObject.getName());
+            lcomTmp = safeGet(lcom3Map, classObject.getName());
+            connTmp = safeGet(connectivityMap, classObject.getName());
+            cboTmp = computeCBO(importCouplingMap, classObject.getName());
         } catch (Throwable t) {
-            // fallback if metrics cannot be computed
-            this.lcom = 0.0;
-            this.connectivity = 0.0;
-            this.cbo = 0.0;
+            System.err.println("[MetricsContext] Warning: failed to compute full metrics for "
+                    + classObject.getName() + " (" + t.getMessage() + ")");
         }
 
+        this.cbo = cboTmp;
+        this.lcom = lcomTmp;
+        this.connectivity = connTmp;
+
+        // fanIn/out set externally
         this.fanIn = 0;
         this.fanOut = 0;
     }
 
-    // --- Utility to read private maps via reflection  ---
+    // --- Reflection helpers ---
     @SuppressWarnings("unchecked")
     private static <T> Map<String, T> getField(Object obj, String fieldName) {
         try {
@@ -68,18 +77,15 @@ public class MetricsContext {
         }
     }
 
-    // --- Safe getter with default ---
     private static double safeGet(Map<String, Double> map, String key) {
         if (map == null) return 0.0;
         Double val = map.get(key);
         return (val != null && !val.isNaN()) ? val : 0.0;
     }
 
-    // --- Count subclasses in system ---
-    private int countSubclasses(ClassObject cls) {
-        int count = 0;
-        SystemObject system = ASTReader.getSystemObject();
+    private int countSubclasses(ClassObject cls, SystemObject system) {
         if (system == null) return 0;
+        int count = 0;
         for (ClassObject other : system.getClassObjects()) {
             TypeObject superType = other.getSuperclass();
             if (superType != null && superType.getClassType().equals(cls.getName())) {
@@ -89,7 +95,6 @@ public class MetricsContext {
         return count;
     }
 
-    // --- Compute average coupling (CBO) from MMImportCoupling ---
     @SuppressWarnings("unchecked")
     private double computeCBO(Map<String, ?> importCouplingMap, String className) {
         try {
@@ -109,14 +114,13 @@ public class MetricsContext {
         }
     }
 
-    // --- External fan-in/out setters ---
+    // --- Fan-in/out setters ---
     public void setFanIn(int fanIn) { this.fanIn = fanIn; }
     public void setFanOut(int fanOut) { this.fanOut = fanOut; }
 
     // --- Getters ---
     public int getNom() { return nom; }
     public int getNoc() { return noc; }
-    public double getWmc() { return wmc; }
     public double getCbo() { return cbo; }
     public double getLcom() { return lcom; }
     public double getConnectivity() { return connectivity; }
@@ -126,9 +130,8 @@ public class MetricsContext {
     @Override
     public String toString() {
         return "MetricsContext{" +
-                ", nom=" + nom +
+                "nom=" + nom +
                 ", noc=" + noc +
-                ", wmc=" + wmc +
                 ", cbo=" + cbo +
                 ", lcom=" + lcom +
                 ", connectivity=" + connectivity +

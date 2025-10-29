@@ -1,109 +1,45 @@
 package gr.uom.java.ast.context;
 
-import java.util.List;
 import gr.uom.java.ast.FieldObject;
-import gr.uom.java.ast.Access;
-import gr.uom.java.ast.CommentObject;
-import java.util.ArrayList;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
- * A lightweight wrapper that captures contextual information about a field,
- * extracted from JDeodorant's FieldObject.
+ * A wrapper around JDeodorant's FieldObject.
+ * This class only stores relationships to other contextual elements
+ * (readByMethods, writterByMethods).
  */
 public class FieldContext {
-    private String name;
-    private String type;
-    private String declaringClass;
-    private String visibility; // derived from Access
-    private boolean isStatic;
-    private List<String> comments = new ArrayList<>();
 
-    public FieldContext(FieldObject field) {
-        this.name = field.getName();
-        this.type = field.getType() != null ? field.getType().toString() : "unknown";
-        this.declaringClass = field.getClassName();
-        this.visibility = accessToVisibility(field.getAccess());
-        this.isStatic = field.isStatic();
+    private final FieldObject fieldObject;
+    private final Set<MethodContext> readByMethods = new HashSet<>();
+    private final Set<MethodContext> writtenByMethods = new HashSet<>();
 
-        // Extract comment text if available
-        ListIterator<CommentObject> it = field.getCommentListIterator();
-        while (it.hasNext()) {
-            CommentObject c = it.next();
-            if (c != null && c.getText() != null) {
-                comments.add(c.getText());
-            }
-        }
+    public FieldContext(FieldObject fieldObject) {
+        this.fieldObject = fieldObject;
     }
 
-    private String accessToVisibility(Access access) {
-        if (access == null) return "default";
-        switch (access) {
-            case PUBLIC: return "public";
-            case PRIVATE: return "private";
-            case PROTECTED: return "protected";
-            default: return "default";
-        }
+    public FieldObject getFieldObject() {
+        return fieldObject;
+    }
+
+    public Set<MethodContext> getReadByMethods() {
+        return readByMethods;
+    }
+
+    public Set<MethodContext> getWrittenByMethods() {
+        return writtenByMethods;
+    }
+
+    public void addReadByMethod(MethodContext method) {
+        readByMethods.add(method);
+    }
+
+    public void addWrittenByMethod(MethodContext method) {
+        writtenByMethods.add(method);
     }
 
     @Override
     public String toString() {
-        return String.format(
-            "%s %s %s (declared in %s)",
-            visibility,
-            isStatic ? "static" : "",
-            type + " " + name,
-            declaringClass
-        ).trim();
+        return "FieldContext[" + fieldObject.getName() + "]";
     }
-
-    // Getters and Setters
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getDeclaringClass() {
-		return declaringClass;
-	}
-
-	public void setDeclaringClass(String declaringClass) {
-		this.declaringClass = declaringClass;
-	}
-
-	public String getVisibility() {
-		return visibility;
-	}
-
-	public void setVisibility(String visibility) {
-		this.visibility = visibility;
-	}
-
-	public boolean isStatic() {
-		return isStatic;
-	}
-
-	public void setStatic(boolean isStatic) {
-		this.isStatic = isStatic;
-	}
-
-	public List<String> getComments() {
-		return comments;
-	}
-
-	public void setComments(List<String> comments) {
-		this.comments = comments;
-	}
 }
-
