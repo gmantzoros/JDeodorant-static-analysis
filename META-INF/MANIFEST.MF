@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: JDeodorant Plug-in
-Bundle-SymbolicName: gr.uom.java.jdeodorant; singleton:=true
+Bundle-SymbolicName: gr.uom.java.jdeodorant;singleton:=true
 Bundle-Version: 5.0.85
 Bundle-Activator: gr.uom.java.jdeodorant.refactoring.Activator
 Bundle-Localization: plugin
@@ -31,3 +31,5 @@ Export-Package: ca.concordia.jdeodorant.clone.parsers,
  gr.uom.java.distance,
  gr.uom.java.jdeodorant.refactoring.manipulators,
  gr.uom.java.jdeodorant.refactoring.views
+Bundle-ClassPath: .,\
+ lib/freemarker.jar
