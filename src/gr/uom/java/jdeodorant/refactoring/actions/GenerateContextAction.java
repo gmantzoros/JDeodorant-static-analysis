@@ -53,7 +53,7 @@ public class GenerateContextAction implements IWorkbenchWindowActionDelegate {
             System.out.println("========================================");
 
             // --- Build the project context ---
-            ObjectContext context = ContextBuilder.buildCurrentProjectContext();
+            ObjectContext context = ContextBuilder.buildProjectContext(JavaCore.create(project));
             if (context == null) {
                 MessageDialog.openWarning(window.getShell(), "Generate Context",
                         "Failed to build ObjectContext for project: " + project.getName());

@@ -15,46 +15,45 @@ import org.eclipse.jdt.core.*;
  */
 public class ContextBuilder {
 
-    public static ObjectContext buildCurrentProjectContext() {
-        SystemObject system = null;
-        IJavaProject javaProject = getActiveJavaProject();
+	public static ObjectContext buildProjectContext(IJavaProject javaProject) {
+	    if (javaProject == null) {
+	        System.out.println("[ContextBuilder] Provided Java project is null.");
+	        return null;
+	    }
 
-        if (javaProject == null) {
-            System.out.println("[ContextBuilder] No active Java project found.");
-            return null;
-        }
+	    SystemObject system = null;
 
-        try {
-            System.out.println("[ContextBuilder] Starting AST build for: " + javaProject.getElementName());
-            logProjectStructure(javaProject);
+	    try {
+	        System.out.println("[ContextBuilder] Starting AST build for: " + javaProject.getElementName());
+	        logProjectStructure(javaProject);
 
-            ASTReader reader = new ASTReader(javaProject, new NullProgressMonitor());
-            system = ASTReader.getSystemObject();
+	        ASTReader reader = new ASTReader(javaProject, new NullProgressMonitor());
+	        system = ASTReader.getSystemObject();
 
-            if (system == null || system.getClassNumber() == 0) {
-                System.out.println("[ContextBuilder] ASTReader returned no classes. Something went wrong.");
-                return null;
-            }
+	        if (system == null || system.getClassNumber() == 0) {
+	            System.out.println("[ContextBuilder] ASTReader returned no classes for project: " + javaProject.getElementName());
+	            return null;
+	        }
 
-            System.out.println("[ContextBuilder] Parsed " + system.getClassNumber() + " classes successfully.");
-        } catch (Exception e) {
-            System.err.println("[ContextBuilder] Exception while building AST: " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
+	        System.out.println("[ContextBuilder] Parsed " + system.getClassNumber() + " classes successfully.");
+	    } catch (Exception e) {
+	        System.err.println("[ContextBuilder] Exception while building AST: " + e.getMessage());
+	        e.printStackTrace();
+	        return null;
+	    }
 
-        ObjectContext objectContext = new ObjectContext(system);
+	    ObjectContext objectContext = new ObjectContext(system);
 
-        buildClassContexts(objectContext);
-        buildMethodRelationships(objectContext);
-        buildFieldAccessRelationships(objectContext);
-        buildClassRelationships(objectContext);
-        attachSourceCode(system, objectContext);
-        computeMetrics(objectContext);
+	    buildClassContexts(objectContext);
+	    buildMethodRelationships(objectContext);
+	    buildFieldAccessRelationships(objectContext);
+	    buildClassRelationships(objectContext);
+	    attachSourceCode(system, objectContext);
+	    computeMetrics(objectContext);
 
-        System.out.println("[ContextBuilder] Context fully built.");
-        return objectContext;
-    }
+	    System.out.println("[ContextBuilder] Context fully built for project: " + javaProject.getElementName());
+	    return objectContext;
+	}
 
     private static void logProjectStructure(IJavaProject javaProject) {
         try {
@@ -77,21 +76,6 @@ public class ContextBuilder {
         } catch (Exception e) {
             System.err.println("[ContextBuilder] Failed to list project structure: " + e.getMessage());
         }
-    }
-
-    private static IJavaProject getActiveJavaProject() {
-        try {
-            IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-            for (IProject project : root.getProjects()) {
-                if (project.isOpen() && project.hasNature(JavaCore.NATURE_ID)) {
-                    System.out.println("[ContextBuilder] Using project: " + project.getName());
-                    return JavaCore.create(project);
-                }
-            }
-        } catch (CoreException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     private static void buildClassContexts(ObjectContext objectContext) {
