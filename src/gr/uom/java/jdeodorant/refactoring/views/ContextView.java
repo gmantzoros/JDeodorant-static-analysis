@@ -4,9 +4,18 @@ import gr.uom.java.ast.context.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.part.ViewPart;
 
+import freemarker.template.*;
+import org.eclipse.jface.dialogs.MessageDialog;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,14 +33,38 @@ public class ContextView extends ViewPart {
 
     @Override
     public void createPartControl(Composite parent) {
-        parent.setLayout(new FillLayout());
+        // 2-column layout: TableViewer (left), Button (right)
+        GridLayout layout = new GridLayout(2, false);
+        layout.marginWidth = 5;
+        layout.marginHeight = 5;
+        layout.horizontalSpacing = 8;
+        parent.setLayout(layout);
+
+        // --- Table Viewer (fills most space) ---
         viewer = new TableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.H_SCROLL);
         viewer.getTable().setHeaderVisible(true);
         viewer.getTable().setLinesVisible(true);
-
         createColumns();
         viewer.setContentProvider(ArrayContentProvider.getInstance());
         viewer.setLabelProvider(new ContextLabelProvider());
+
+        GridData viewerData = new GridData(SWT.FILL, SWT.FILL, true, true);
+        viewer.getControl().setLayoutData(viewerData);
+
+        // --- Generate Prompt Button (right side) ---
+        Composite buttonContainer = new Composite(parent, SWT.NONE);
+        buttonContainer.setLayout(new GridLayout(1, false));
+        GridData containerData = new GridData(SWT.RIGHT, SWT.TOP, false, false);
+        buttonContainer.setLayoutData(containerData);
+
+        Button generatePromptButton = new Button(buttonContainer, SWT.PUSH);
+        generatePromptButton.setText("Generate Prompt");
+        GridData buttonData = new GridData(SWT.FILL, SWT.TOP, false, false);
+        buttonData.widthHint = 130;
+        buttonData.heightHint = 30;
+        generatePromptButton.setLayoutData(buttonData);
+
+        generatePromptButton.addListener(SWT.Selection, e -> generatePrompt());
 
         // --- Double-click listener ---
         viewer.addDoubleClickListener(event -> {
@@ -195,6 +228,148 @@ public class ContextView extends ViewPart {
         return roots;
     }
 
+    /**
+     * Generates a text prompt using a FreeMarker template.
+     */
+    private void generatePrompt() {
+        IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+        if (selection.isEmpty() || !(selection.getFirstElement() instanceof ClassContext)) {
+            MessageDialog.openInformation(viewer.getControl().getShell(),
+                    "No Class Selected", "Please select a class first.");
+            return;
+        }
+
+        ClassContext cls = (ClassContext) selection.getFirstElement();
+
+        try {
+            // Setup FreeMarker
+            Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
+            cfg.setDefaultEncoding("UTF-8");
+
+            // Load template 
+            try {
+            		org.osgi.framework.Bundle bundle = org.eclipse.core.runtime.Platform.getBundle("gr.uom.java.jdeodorant");
+                java.net.URL entry = bundle.getEntry("templates");
+                java.io.File templateDir = new java.io.File(org.eclipse.core.runtime.FileLocator.toFileURL(entry).getPath());
+                cfg.setDirectoryForTemplateLoading(templateDir);
+            } catch (Exception ex) {
+                MessageDialog.openError(viewer.getControl().getShell(),
+                        "Template Error", "Could not locate template directory in plugin bundle.\n" + ex.getMessage());
+                return;
+            }
+
+            Template template = cfg.getTemplate("prompt_template.ftl");
+
+            // Build data model
+            Map<String, Object> data = buildPromptDataModel(cls);
+
+            // Process template
+            StringWriter writer = new StringWriter();
+            template.process(data, writer);
+            String result = writer.toString();
+
+            showPromptDialog(result);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            MessageDialog.openError(viewer.getControl().getShell(), "Template Error", e.getMessage());
+        }
+    }
+
+    /**
+     * Builds data for the FreeMarker template.
+     */
+    private Map<String, Object> buildPromptDataModel(ClassContext cls) {
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("className", cls.getClassName());
+
+        MetricsContext metrics = cls.getMetricsContext();
+        if (metrics != null) {
+            data.put("nom", metrics.getNom());
+            data.put("noc", metrics.getNoc());
+            data.put("cbo", metrics.getCbo());
+            data.put("lcom", metrics.getLcom());
+            data.put("connectivity", metrics.getConnectivity());
+            data.put("fanIn", metrics.getFanIn());
+            data.put("fanOut", metrics.getFanOut());
+        }
+
+        List<String> dependsOn = new ArrayList<String>();
+        for (ClassContext dep : cls.getDependencyClasses()) {
+            dependsOn.add(dep.getClassName());
+        }
+        data.put("dependsOn", dependsOn);
+
+        List<String> dependedBy = new ArrayList<String>();
+        for (ClassContext dep : cls.getDependentClasses()) {
+            dependedBy.add(dep.getClassName());
+        }
+        data.put("dependedBy", dependedBy);
+
+        List<Map<String, Object>> fields = new ArrayList<Map<String, Object>>();
+        for (FieldContext f : cls.getFieldContexts()) {
+            Map<String, Object> fm = new HashMap<String, Object>();
+            fm.put("name", f.getFieldObject().getName());
+
+            List<String> readBy = new ArrayList<String>();
+            for (MethodContext m : f.getReadByMethods()) {
+                readBy.add("← [R] " + m.getMethodObject().getClassName() + "." + m.getMethodObject().getName());
+            }
+            fm.put("readBy", readBy);
+
+            List<String> writtenBy = new ArrayList<String>();
+            for (MethodContext m : f.getWrittenByMethods()) {
+                writtenBy.add("← [W] " + m.getMethodObject().getClassName() + "." + m.getMethodObject().getName());
+            }
+            fm.put("writtenBy", writtenBy);
+
+            fields.add(fm);
+        }
+        data.put("fields", fields);
+
+        List<Map<String, Object>> methods = new ArrayList<Map<String, Object>>();
+        for (MethodContext m : cls.getMethodContexts()) {
+            Map<String, Object> mm = new HashMap<String, Object>();
+            mm.put("name", m.getMethodObject().getName());
+
+            List<String> calls = new ArrayList<String>();
+            for (MethodContext called : m.getCalledMethods()) {
+                calls.add("→ " + called.getMethodObject().getClassName() + "." + called.getMethodObject().getName());
+            }
+            mm.put("calls", calls);
+
+            List<String> calledBy = new ArrayList<String>();
+            for (MethodContext caller : m.getCallerMethods()) {
+                calledBy.add("← " + caller.getMethodObject().getClassName() + "." + caller.getMethodObject().getName());
+            }
+            mm.put("calledBy", calledBy);
+
+            methods.add(mm);
+        }
+        data.put("methods", methods);
+
+        String source = cls.getSourceCode();
+        data.put("sourceCode", source != null ? source : "[Source unavailable]");
+        return data;
+    }
+
+    /**
+     * Displays the generated prompt in a dialog.
+     */
+    private void showPromptDialog(String text) {
+        Shell shell = viewer.getControl().getShell();
+        Shell dialog = new Shell(shell, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL);
+        dialog.setText("Generated Prompt");
+        dialog.setLayout(new FillLayout());
+        dialog.setSize(800, 600);
+
+        Text area = new Text(dialog, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+        area.setText(text);
+        area.setEditable(false);
+
+        dialog.open();
+    }
+    
     /**
      * Simple data structure for the tree.
      */
