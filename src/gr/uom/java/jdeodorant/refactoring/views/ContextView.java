@@ -77,8 +77,8 @@ public class ContextView extends ViewPart {
     }
 
     private void createColumns() {
-        String[] titles = { "Class", "Fields", "Methods", "Dependencies", "Dependents" };
-        int[] bounds =   { 250, 100, 100, 120, 120 };
+        String[] titles = { "Class", "Fields", "Methods"};
+        int[] bounds =   { 500, 100, 100};
 
         for (int i = 0; i < titles.length; i++) {
             TableViewerColumn col = new TableViewerColumn(viewer, SWT.NONE);
@@ -110,6 +110,12 @@ public class ContextView extends ViewPart {
         dialog.setText("Class Details: " + cls.getClassName());
         dialog.setLayout(new FillLayout());
         dialog.setSize(900, 700);
+
+        // Lazily enrich the class before building its details
+        if (cls.getMetricsContext() == null || cls.getSourceCode() == null) {
+            System.out.println("[ContextView] Enriching class lazily: " + cls.getClassName());
+            ContextBuilder.enrichClassContext(objectContext, cls);
+        }
 
         TreeViewer treeViewer = new TreeViewer(dialog, SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.H_SCROLL);
         Tree tree = treeViewer.getTree();
@@ -240,6 +246,12 @@ public class ContextView extends ViewPart {
         }
 
         ClassContext cls = (ClassContext) selection.getFirstElement();
+        
+        // Lazily enrich before prompt generation
+        if (cls.getMetricsContext() == null || cls.getSourceCode() == null) {
+            System.out.println("[ContextView] Enriching class lazily before prompt: " + cls.getClassName());
+            ContextBuilder.enrichClassContext(objectContext, cls);
+        }
 
         try {
             // Setup FreeMarker
@@ -453,8 +465,6 @@ public class ContextView extends ViewPart {
                     case 0: return cls.getClassName();
                     case 1: return String.valueOf(cls.getFieldContexts().size());
                     case 2: return String.valueOf(cls.getMethodContexts().size());
-                    case 3: return String.valueOf(cls.getDependencyClasses().size());
-                    case 4: return String.valueOf(cls.getDependentClasses().size());
                 }
             }
             return "";
