@@ -48,6 +48,7 @@ public class ContextBuilder {
 
         ObjectContext objectContext = new ObjectContext(system);
         buildClassContexts(objectContext); // only build minimal class list
+        buildGlobalDependencies(objectContext); // Builds dependencies for all classes
 
         System.out.println("[ContextBuilder] Created " + objectContext.getClassContexts().size() + " ClassContexts (lazy).");
         return objectContext;
@@ -79,9 +80,6 @@ public class ContextBuilder {
 
             // Build local relationships only for this class
             buildLocalRelationships(objectContext, target);
-
-            // Compute fan-in/out metrics for dependencies
-            computeLocalDependencies(objectContext, target);
 
             System.out.println("[ContextBuilder] Class enriched successfully: " + target.getClassName());
         } catch (Exception e) {
@@ -124,68 +122,73 @@ public class ContextBuilder {
             }
         }
     }
+    
+    /**
+     * Builds global inter-class dependency relationships once for all classes.
+     * This ensures dependency and fan-in/out data is complete even before enrichment.
+     */
+    public static void buildGlobalDependencies(ObjectContext objectContext) {
+        if (objectContext == null) return;
 
-    private static void computeLocalDependencies(ObjectContext objectContext, ClassContext target) {
-        ClassObject cls = target.getClassObject();
-        Set<String> deps = new HashSet<>();
-
-        if (cls.getSuperclass() != null)
-            deps.add(cls.getSuperclass().getClassType());
-
-        ListIterator<TypeObject> itf = cls.getInterfaceIterator();
-        while (itf.hasNext())
-            deps.add(itf.next().getClassType());
-
-        ListIterator<FieldObject> fields = cls.getFieldIterator();
-        while (fields.hasNext()) {
-            FieldObject f = fields.next();
-            if (f.getType() != null)
-                deps.add(f.getType().getClassType());
-        }
-
-        ListIterator<MethodObject> methods = cls.getMethodIterator();
-        while (methods.hasNext()) {
-            MethodObject m = methods.next();
-            if (m.getReturnType() != null)
-                deps.add(m.getReturnType().getClassType());
-
-            ListIterator<ParameterObject> params = m.getParameterListIterator();
-            while (params.hasNext()) {
-                ParameterObject p = params.next();
-                if (p.getType() != null)
-                    deps.add(p.getType().getClassType());
-            }
-
-            for (MethodInvocationObject mio : m.getMethodInvocations()) {
-                if (mio.getOriginClassName() != null && !mio.getOriginClassName().equals(cls.getName()))
-                    deps.add(mio.getOriginClassName());
-            }
-
-            for (CreationObject c : m.getCreations()) {
-                if (c.getType() != null)
-                    deps.add(c.getType().getClassType());
-            }
-        }
-
-        // Link to other known ClassContexts
+        SystemObject system = objectContext.getSystemObject();
         Map<String, ClassContext> classMap = new HashMap<>();
         for (ClassContext ctx : objectContext.getClassContexts()) {
             classMap.put(ctx.getClassName(), ctx);
         }
 
-        for (String depName : deps) {
-            ClassContext depCtx = classMap.get(depName);
-            if (depCtx != null && !depName.equals(target.getClassName())) {
-                target.addDependency(depCtx);
-                depCtx.addDependent(target);
+        for (ClassContext sourceCtx : objectContext.getClassContexts()) {
+            ClassObject cls = sourceCtx.getClassObject();
+            Set<String> deps = new HashSet<>();
+
+            if (cls.getSuperclass() != null)
+                deps.add(cls.getSuperclass().getClassType());
+
+            ListIterator<TypeObject> itf = cls.getInterfaceIterator();
+            while (itf.hasNext())
+                deps.add(itf.next().getClassType());
+
+            ListIterator<FieldObject> fields = cls.getFieldIterator();
+            while (fields.hasNext()) {
+                FieldObject f = fields.next();
+                if (f.getType() != null)
+                    deps.add(f.getType().getClassType());
+            }
+
+            ListIterator<MethodObject> methods = cls.getMethodIterator();
+            while (methods.hasNext()) {
+                MethodObject m = methods.next();
+
+                if (m.getReturnType() != null)
+                    deps.add(m.getReturnType().getClassType());
+
+                ListIterator<ParameterObject> params = m.getParameterListIterator();
+                while (params.hasNext()) {
+                    ParameterObject p = params.next();
+                    if (p.getType() != null)
+                        deps.add(p.getType().getClassType());
+                }
+
+                for (MethodInvocationObject mio : m.getMethodInvocations()) {
+                    if (mio.getOriginClassName() != null && !mio.getOriginClassName().equals(cls.getName()))
+                        deps.add(mio.getOriginClassName());
+                }
+
+                for (CreationObject c : m.getCreations()) {
+                    if (c.getType() != null)
+                        deps.add(c.getType().getClassType());
+                }
+            }
+
+            for (String depName : deps) {
+                ClassContext targetCtx = classMap.get(depName);
+                if (targetCtx != null && !depName.equals(sourceCtx.getClassName())) {
+                    sourceCtx.addDependency(targetCtx);
+                    targetCtx.addDependent(sourceCtx);
+                }
             }
         }
 
-        MetricsContext metrics = target.getMetricsContext();
-        if (metrics != null) {
-            metrics.setFanIn(target.getDependentClasses().size());
-            metrics.setFanOut(target.getDependencyClasses().size());
-        }
+        System.out.println("[ContextBuilder] Built global dependency graph for all classes.");
     }
 
     // -----------------------------------------------------------------------
