@@ -157,8 +157,6 @@ public class ContextView extends ViewPart {
             metricsNode.addChild(new TreeNode("CBO (Coupling Between Objects)", String.format("%.3f", metrics.getCbo())));
             metricsNode.addChild(new TreeNode("LCOM (Lack of Cohesion)", String.format("%.3f", metrics.getLcom())));
             metricsNode.addChild(new TreeNode("Connectivity", String.format("%.3f", metrics.getConnectivity())));
-            metricsNode.addChild(new TreeNode("Fan-In (Dependents)", String.valueOf(metrics.getFanIn())));
-            metricsNode.addChild(new TreeNode("Fan-Out (Dependencies)", String.valueOf(metrics.getFanOut())));
             roots.add(metricsNode);
         }
 
@@ -302,8 +300,6 @@ public class ContextView extends ViewPart {
             data.put("cbo", metrics.getCbo());
             data.put("lcom", metrics.getLcom());
             data.put("connectivity", metrics.getConnectivity());
-            data.put("fanIn", metrics.getFanIn());
-            data.put("fanOut", metrics.getFanOut());
         }
 
         List<String> dependsOn = new ArrayList<String>();

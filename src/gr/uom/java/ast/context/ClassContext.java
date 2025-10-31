@@ -89,8 +89,6 @@ public class ClassContext {
                 ", methods=" + methodContexts.size() +
                 ", fields=" + fieldContexts.size() +
                 ", dependsOn=" + dependencyClasses.size() +
-                ", fanIn=" + (metricsContext != null ? metricsContext.getFanIn() : "N/A") +
-                ", fanOut=" + (metricsContext != null ? metricsContext.getFanOut() : "N/A") +
                 "]";
     }
 }

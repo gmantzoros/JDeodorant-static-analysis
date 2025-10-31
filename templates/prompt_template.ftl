@@ -1,83 +1,68 @@
-=== REFACTORING TASK PROMPT ===
-
-Task: Perform an **Extract Class Refactoring** on the provided source code.
+Task: Perform an Extract Class Refactoring on the provided source code.
 
 Instructions:
-- Do not include explanations or comments; output only the refactored code.
-- Use the provided static analysis data as context.
-- Ensure the refactoring improves cohesion, reduces class responsibilities, and respects existing architectural boundaries.
-- Maintain naming consistency, method visibility, and dependency integrity.
+- Output only the refactored code — no explanations, comments, or rationale.
+- Use the static analysis data below to guide your design decisions.
+- Focus on improving cohesion, reducing class responsibilities, and maintaining architectural boundaries.
+- Preserve original behavior, method visibility, and naming consistency.
 
 ---
 
 Static Analysis Context:
 
-Class: ${className}
+The class ${className} has been analyzed to reveal its structure, dependencies, and internal relationships.
 
-[Metrics]
-<#if nom??> - NOM (Number of Methods): ${nom}</#if>
-<#if noc??> - NOC (Number of Children): ${noc}</#if>
-<#if cbo??> - CBO (Coupling Between Objects): ${cbo}</#if>
-<#if lcom??> - LCOM (Lack of Cohesion): ${lcom}</#if>
-<#if connectivity??> - Connectivity: ${connectivity}</#if>
-<#if fanIn??> - Fan-In (Dependents): ${fanIn}</#if>
-<#if fanOut??> - Fan-Out (Dependencies): ${fanOut}</#if>
+<#-- Metrics -->
+<#if nom?? || noc?? || cbo?? || lcom?? || connectivity?? || fanIn?? || fanOut??>
+It exhibits the following metrics:
+<#if nom??>  • Number of Methods (NOM): ${nom}</#if>
+<#if noc??>  • Number of Children (NOC): ${noc}</#if>
+<#if cbo??>  • Coupling Between Objects (CBO): ${cbo}</#if>
+<#if lcom??>  • Lack of Cohesion in Methods (LCOM): ${lcom}</#if>
+<#if connectivity??>  • Connectivity: ${connectivity}</#if>
+<#if fanIn??>  • Fan-In (Dependents): ${fanIn}</#if>
+<#if fanOut??>  • Fan-Out (Dependencies): ${fanOut}</#if>
+</#if>
 
-[Dependencies]
+<#-- Dependencies -->
+<#if dependsOn?size gt 0 || dependedBy?size gt 0>
+In terms of external coupling:
 <#if dependsOn?size gt 0>
-- Depends On:
-  <#list dependsOn as d>  * ${d}</#list>
+  - It depends on the following classes:
+    <#list dependsOn as d>    • ${d}</#list>
 <#else>
-- Depends On: none
+  - It has no outgoing dependencies.
 </#if>
-
 <#if dependedBy?size gt 0>
-- Depended By:
-  <#list dependedBy as d>  * ${d}</#list>
+  - It is used by these classes:
+    <#list dependedBy as d>    • ${d}</#list>
 <#else>
-- Depended By: none
+  - It has no incoming dependents.
+</#if>
 </#if>
 
-[Fields and Access Patterns]
+<#-- Fields -->
 <#if fields?size gt 0>
+Its fields and their access patterns are as follows:
 <#list fields as f>
-- Field: ${f.name}
-  <#if f.readBy?size gt 0>
-  Read by:
-    <#list f.readBy as r>    • ${r}</#list>
-  <#else>
-  Read by: none
-  </#if>
-  <#if f.writtenBy?size gt 0>
-  Written by:
-    <#list f.writtenBy as w>    • ${w}</#list>
-  <#else>
-  Written by: none
-  </#if>
+  • ${f.name}
+    <#if f.readBy?size gt 0>Read by: <#list f.readBy as r>${r}<#if r_has_next>, </#if></#list><#else>Read by: none</#if>;
+    <#if f.writtenBy?size gt 0>Written by: <#list f.writtenBy as w>${w}<#if w_has_next>, </#if></#list><#else>Written by: none</#if>.
 </#list>
 <#else>
-- No fields found.
+No fields were detected in this class.
 </#if>
 
-[Methods and Relationships]
+<#-- Methods -->
 <#if methods?size gt 0>
+The methods and their interactions are as follows:
 <#list methods as m>
-- Method: ${m.name}
-  <#if m.calls?size gt 0>
-  Calls:
-    <#list m.calls as c>    • ${c}</#list>
-  <#else>
-  Calls: none
-  </#if>
-  <#if m.calledBy?size gt 0>
-  Called By:
-    <#list m.calledBy as cb>    • ${cb}</#list>
-  <#else>
-  Called By: none
-  </#if>
+  • ${m.name}
+    <#if m.calls?size gt 0>Calls: <#list m.calls as c>${c}<#if c_has_next>, </#if></#list><#else>Calls: none</#if>;
+    <#if m.calledBy?size gt 0>Called by: <#list m.calledBy as cb>${cb}<#if cb_has_next>, </#if></#list><#else>Called by: none</#if>.
 </#list>
 <#else>
-- No methods found.
+No methods were found for this class.
 </#if>
 
 ---

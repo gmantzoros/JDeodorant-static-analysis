@@ -17,8 +17,6 @@ public class MetricsContext {
     private final double cbo;       // Coupling Between Objects
     private final double lcom;      // Lack of Cohesion in Methods (LCOM3)
     private final double connectivity; // From ConnectivityMetric
-    private int fanIn;              // Classes depending on this class
-    private int fanOut;             // Classes this class depends on
 
     public MetricsContext(ClassObject classObject) {
         if (classObject == null) {
@@ -59,10 +57,6 @@ public class MetricsContext {
         this.cbo = cboTmp;
         this.lcom = lcomTmp;
         this.connectivity = connTmp;
-
-        // fanIn/out set externally
-        this.fanIn = 0;
-        this.fanOut = 0;
     }
 
     // --- Reflection helpers ---
@@ -114,18 +108,12 @@ public class MetricsContext {
         }
     }
 
-    // --- Fan-in/out setters ---
-    public void setFanIn(int fanIn) { this.fanIn = fanIn; }
-    public void setFanOut(int fanOut) { this.fanOut = fanOut; }
-
     // --- Getters ---
     public int getNom() { return nom; }
     public int getNoc() { return noc; }
     public double getCbo() { return cbo; }
     public double getLcom() { return lcom; }
     public double getConnectivity() { return connectivity; }
-    public int getFanIn() { return fanIn; }
-    public int getFanOut() { return fanOut; }
 
     @Override
     public String toString() {
@@ -135,8 +123,6 @@ public class MetricsContext {
                 ", cbo=" + cbo +
                 ", lcom=" + lcom +
                 ", connectivity=" + connectivity +
-                ", fanIn=" + fanIn +
-                ", fanOut=" + fanOut +
                 '}';
     }
 }
