@@ -2,11 +2,13 @@ package gr.uom.java.jdeodorant.refactoring.views;
 
 import gr.uom.java.ast.context.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.part.ViewPart;
 
 import freemarker.template.*;
@@ -244,7 +246,7 @@ public class ContextView extends ViewPart {
         }
 
         ClassContext cls = (ClassContext) selection.getFirstElement();
-        
+
         // Lazily enrich before prompt generation
         if (cls.getMetricsContext() == null || cls.getSourceCode() == null) {
             System.out.println("[ContextView] Enriching class lazily before prompt: " + cls.getClassName());
@@ -256,11 +258,11 @@ public class ContextView extends ViewPart {
             Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
             cfg.setDefaultEncoding("UTF-8");
 
-            // Load template 
+            File templateDir;
             try {
-            		org.osgi.framework.Bundle bundle = org.eclipse.core.runtime.Platform.getBundle("gr.uom.java.jdeodorant");
+                org.osgi.framework.Bundle bundle = org.eclipse.core.runtime.Platform.getBundle("gr.uom.java.jdeodorant");
                 java.net.URL entry = bundle.getEntry("templates");
-                java.io.File templateDir = new java.io.File(org.eclipse.core.runtime.FileLocator.toFileURL(entry).getPath());
+                templateDir = new java.io.File(org.eclipse.core.runtime.FileLocator.toFileURL(entry).getPath());
                 cfg.setDirectoryForTemplateLoading(templateDir);
             } catch (Exception ex) {
                 MessageDialog.openError(viewer.getControl().getShell(),
@@ -268,7 +270,31 @@ public class ContextView extends ViewPart {
                 return;
             }
 
-            Template template = cfg.getTemplate("prompt_template.ftl");
+            // Let the user select a template
+            String[] availableTemplates = templateDir.list((dir, name) -> name.endsWith(".ftl"));
+            if (availableTemplates == null || availableTemplates.length == 0) {
+                MessageDialog.openInformation(viewer.getControl().getShell(),
+                        "No Templates Found", "No .ftl templates found in the 'templates' folder.");
+                return;
+            }
+
+            ElementListSelectionDialog dialog = new ElementListSelectionDialog(
+                    viewer.getControl().getShell(),
+                    new LabelProvider()
+            );
+            dialog.setTitle("Select Template");
+            dialog.setMessage("Choose a FreeMarker template to generate the prompt:");
+            dialog.setElements(availableTemplates);
+            dialog.setMultipleSelection(false);
+
+            if (dialog.open() != Window.OK) {
+                return; // user cancelled
+            }
+
+            String selectedTemplate = (String) dialog.getFirstResult();
+            System.out.println("[ContextView] User selected template: " + selectedTemplate);
+
+            Template template = cfg.getTemplate(selectedTemplate);
 
             // Build data model
             Map<String, Object> data = buildPromptDataModel(cls);
