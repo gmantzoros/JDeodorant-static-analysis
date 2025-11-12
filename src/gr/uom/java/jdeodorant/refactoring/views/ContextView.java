@@ -370,13 +370,13 @@ public class ContextView extends ViewPart {
 
             List<String> readBy = new ArrayList<String>();
             for (MethodContext m : f.getReadByMethods()) {
-                readBy.add("← [R] " + m.getMethodObject().getClassName() + "." + m.getMethodObject().getName());
+                readBy.add("[Read] " + m.getMethodObject().getClassName() + "." + m.getMethodObject().getName());
             }
             fm.put("readBy", readBy);
 
             List<String> writtenBy = new ArrayList<String>();
             for (MethodContext m : f.getWrittenByMethods()) {
-                writtenBy.add("← [W] " + m.getMethodObject().getClassName() + "." + m.getMethodObject().getName());
+                writtenBy.add("[Write] " + m.getMethodObject().getClassName() + "." + m.getMethodObject().getName());
             }
             fm.put("writtenBy", writtenBy);
 

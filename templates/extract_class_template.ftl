@@ -18,51 +18,41 @@ Context and Analysis
 The class ${className} has been analyzed to reveal its structure, dependencies, and internal relationships.
 
 <#-- Metrics -->
-<#if nom?? || noc?? || cbo?? || lcom?? || connectivity?? || fanIn?? || fanOut??>
-Metrics Overview:
-<#if nom??>  • Number of Methods (NOM): ${nom}</#if>
-<#if noc??>  • Number of Children (NOC): ${noc}</#if>
-<#if cbo??>  • Coupling Between Objects (CBO): ${cbo}</#if>
-<#if lcom??>  • Lack of Cohesion in Methods (LCOM): ${lcom}</#if>
-<#if connectivity??>  • Connectivity: ${connectivity}</#if>
-<#if fanIn??>  • Fan-In (Dependents): ${fanIn}</#if>
-<#if fanOut??>  • Fan-Out (Dependencies): ${fanOut}</#if>
+<#if nom?? || noc?? || cbo?? || lcom?? || connectivity??>
+Metrics:
+<#if nom??>• NOM: ${nom}</#if>
+<#if noc??> • NOC: ${noc}</#if>
+<#if cbo??> • CBO: ${cbo}</#if>
+<#if lcom??> • LCOM: ${lcom}</#if>
+<#if connectivity??> • Conn: ${connectivity}</#if>
 </#if>
 
 <#-- Dependencies -->
 Depends On:
-<#list dependsOn as dep>
-  → ${dep.class} (${dep.type})
-</#list>
+<#if dependsOn?size gt 0>
+→ <#list dependsOn as d>${d.class} [${d.type}]<#if d_has_next>, </#if></#list>
+<#else>none</#if>
 
 Depended By:
-<#list dependedBy as dep>
-  ← ${dep.class} (${dep.type})
-</#list>
+<#if dependedBy?size gt 0>
+← <#list dependedBy as d>${d.class} [${d.type}]<#if d_has_next>, </#if></#list>
+<#else>none</#if>
 
 <#-- Fields -->
 <#if fields?size gt 0>
-Fields and Access Patterns:
+Fields:
 <#list fields as f>
-  • ${f.name}
-    <#if f.readBy?size gt 0>Read by: <#list f.readBy as r>${r}<#if r_has_next>, </#if></#list><#else>Read by: none</#if>;
-    <#if f.writtenBy?size gt 0>Written by: <#list f.writtenBy as w>${w}<#if w_has_next>, </#if></#list><#else>Written by: none</#if>.
+• ${f.name} | <#if f.readBy?size gt 0><#list f.readBy as r>${r}<#if r_has_next>,</#if></#list><#else>-</#if> | <#if f.writtenBy?size gt 0><#list f.writtenBy as w>${w}<#if w_has_next>,</#if></#list><#else>-</#if>
 </#list>
-<#else>
-No fields were detected in this class.
-</#if>
+<#else>No fields.</#if>
 
 <#-- Methods -->
 <#if methods?size gt 0>
-Methods and Interactions:
+Methods:
 <#list methods as m>
-  • ${m.name}
-    <#if m.calls?size gt 0>Calls: <#list m.calls as c>${c}<#if c_has_next>, </#if></#list><#else>Calls: none</#if>;
-    <#if m.calledBy?size gt 0>Called by: <#list m.calledBy as cb>${cb}<#if cb_has_next>, </#if></#list><#else>Called by: none</#if>.
+• ${m.name} | Calls:<#if m.calls?size gt 0><#list m.calls as c>${c}<#if c_has_next>,</#if></#list><#else>-</#if> | Called By:<#if m.calledBy?size gt 0><#list m.calledBy as cb>${cb}<#if cb_has_next>,</#if></#list><#else>-</#if>
 </#list>
-<#else>
-No methods were found for this class.
-</#if>
+<#else>No methods.</#if>
 
 ---
 
