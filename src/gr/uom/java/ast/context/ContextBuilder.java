@@ -88,6 +88,19 @@ public class ContextBuilder {
         }
     }
 
+    /**
+     * Builds local relationships within a class, including field access and method calls.
+     * <p>
+     * Analyzes each method in the target class to identify:
+     *   Field reads and writes
+     *   Internal method calls (within the same class)
+     *   External method calls (to other classes)
+     *   
+     * All relationships are registered bidirectionally between source and target elements.
+     *
+     * @param objectContext the context containing all classes in the system
+     * @param target the class to analyze for local relationships
+     */
     private static void buildLocalRelationships(ObjectContext objectContext, ClassContext target) {
         // Map field names for quick lookup
         Map<String, FieldContext> fieldMap = new HashMap<>();
@@ -95,28 +108,56 @@ public class ContextBuilder {
             fieldMap.put(f.getFieldObject().getName(), f);
         }
 
-        // Method-level relationships
+        // Access to all ClassContexts for cross-class calls
+        Map<String, ClassContext> classMap = new HashMap<>();
+        for (ClassContext ctx : objectContext.getClassContexts()) {
+            classMap.put(ctx.getClassName(), ctx);
+        }
+
+        // --- Analyze each method ---
         for (MethodContext m : target.getMethodContexts()) {
             MethodObject mo = m.getMethodObject();
 
-            // Field reads
+            // --- Field reads ---
             for (PlainVariable usedVar : mo.getUsedFieldsThroughThisReference()) {
                 FieldContext f = fieldMap.get(usedVar.getVariableName());
                 if (f != null) f.addReadByMethod(m);
             }
 
-            // Field writes
+            // --- Field writes ---
             for (PlainVariable writtenVar : mo.getDefinedFieldsThroughThisReference()) {
                 FieldContext f = fieldMap.get(writtenVar.getVariableName());
                 if (f != null) f.addWrittenByMethod(m);
             }
 
-            // Local method calls
+            // --- Method calls (local + external) ---
             for (MethodInvocationObject mio : mo.getMethodInvocations()) {
-                for (MethodContext targetMethod : target.getMethodContexts()) {
-                    if (targetMethod.getMethodObject().getSignature().equals(mio.getSignature())) {
-                        m.getCalledMethods().add(targetMethod);
-                        targetMethod.getCallerMethods().add(m);
+                String originClass = mio.getOriginClassName();
+
+                // Case 1: No origin (Same class)
+                if (originClass == null || originClass.equals(target.getClassName())) {
+                    for (MethodContext targetMethod : target.getMethodContexts()) {
+                        if (targetMethod.getMethodObject().getSignature().equals(mio.getSignature())) {
+                            // Symmetric internal link
+                            m.getCalledMethods().add(targetMethod);
+                            targetMethod.getCallerMethods().add(m);
+                            break;
+                        }
+                    }
+                }
+
+                // Case 2: External class call
+                else {
+                    ClassContext externalClassCtx = classMap.get(originClass);
+                    if (externalClassCtx != null && !originClass.equals(target.getClassName())) {
+                        for (MethodContext targetMethod : externalClassCtx.getMethodContexts()) {
+                            if (targetMethod.getMethodObject().getSignature().equals(mio.getSignature())) {
+                                // --- Symmetric cross-class link ---
+                                m.getCalledMethods().add(targetMethod);
+                                targetMethod.getCallerMethods().add(m);
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -145,7 +186,7 @@ public class ContextBuilder {
         for (ClassContext sourceCtx : objectContext.getClassContexts()) {
             ClassObject cls = sourceCtx.getClassObject();
 
-            // Map<ClassName, Set<DependencyType>>
+            // Each target class maps to a set of unique dependency types
             Map<String, Set<String>> depTypes = new LinkedHashMap<>();
 
             // --- Inheritance ---
@@ -181,8 +222,10 @@ public class ContextBuilder {
                 }
 
                 for (MethodInvocationObject mio : m.getMethodInvocations()) {
-                    if (mio.getOriginClassName() != null && !mio.getOriginClassName().equals(cls.getName()))
-                        depTypes.computeIfAbsent(mio.getOriginClassName(), k -> new LinkedHashSet<>()).add("method call");
+                    String origin = mio.getOriginClassName();
+                    if (origin != null && !origin.equals(cls.getName())) {
+                        depTypes.computeIfAbsent(origin, k -> new LinkedHashSet<>()).add("method call");
+                    }
                 }
 
                 for (CreationObject c : m.getCreations()) {
@@ -191,21 +234,25 @@ public class ContextBuilder {
                 }
             }
 
-            // --- Register relationships (multiple per target allowed) ---
+            // --- Register unique relationships ---
             for (Map.Entry<String, Set<String>> entry : depTypes.entrySet()) {
                 String depName = entry.getKey();
                 ClassContext targetCtx = classMap.get(depName);
 
                 if (targetCtx != null && !depName.equals(sourceCtx.getClassName())) {
                     for (String type : entry.getValue()) {
-                        sourceCtx.addDependency(targetCtx, type);
-                        targetCtx.addDependent(sourceCtx, type);
+                        boolean alreadyExists = sourceCtx.getDependencyRelations().stream()
+                            .anyMatch(r -> r.getTarget() == targetCtx && r.getType().equals(type));
+                        if (!alreadyExists) {
+                            sourceCtx.addDependency(targetCtx, type);
+                            targetCtx.addDependent(sourceCtx, type);
+                        }
                     }
                 }
             }
         }
 
-        System.out.println("[ContextBuilder] Built global dependency graph for all classes (multi-type).");
+        System.out.println("[ContextBuilder] Built global dependency graph for all classes (deduplicated per type).");
     }
 
     // -----------------------------------------------------------------------
