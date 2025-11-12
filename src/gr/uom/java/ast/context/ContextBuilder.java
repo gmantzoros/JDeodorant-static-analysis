@@ -7,6 +7,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 
 /**
  * Lazily builds a high-level ObjectContext model from JDeodorant's AST representation.
@@ -71,8 +72,9 @@ public class ContextBuilder {
         System.out.println("[ContextBuilder] Enriching class: " + target.getClassName());
 
         try {
-            // Attach source code
+            // Attach source code for class and method
             attachSourceCodeForClass(cls, target);
+            attachSourceCodeForMethods(cls, target);
 
             // Add metrics if not already set
             if (target.getMetricsContext() == null)
@@ -309,6 +311,37 @@ public class ContextBuilder {
             }
         } catch (Exception e) {
             System.err.println("[ContextBuilder] Failed to read source for class: " + ctx.getClassName());
+        }
+    }
+    
+    private static void attachSourceCodeForMethods(ClassObject classObj, ClassContext ctx) {
+        String classSource = ctx.getSourceCode();
+        if (classSource == null) return; // No point continuing if class source is missing
+
+        try {
+            for (MethodContext methodCtx : ctx.getMethodContexts()) {
+                MethodObject methodObj = methodCtx.getMethodObject();
+                MethodDeclaration decl = methodObj.getMethodDeclaration();
+
+                if (decl != null) {
+                    int start = decl.getStartPosition();
+                    int end = start + decl.getLength();
+
+                    if (start >= 0 && end <= classSource.length()) {
+                        String snippet = classSource.substring(start, end);
+                        methodCtx.setSourceCode(snippet);
+                    } else {
+                        methodCtx.setSourceCode("[Source unavailable]");
+                    }
+                } else {
+                    methodCtx.setSourceCode("[No MethodDeclaration]");
+                }
+            }
+
+            System.out.println("[ContextBuilder] Attached method-level source for class: " + ctx.getClassName());
+        } catch (Exception e) {
+            System.err.println("[ContextBuilder] Failed to attach method sources for " + ctx.getClassName());
+            e.printStackTrace();
         }
     }
 

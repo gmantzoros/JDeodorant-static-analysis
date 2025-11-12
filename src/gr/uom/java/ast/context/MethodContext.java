@@ -14,6 +14,8 @@ public class MethodContext {
     private final MethodObject methodObject;
     private final Set<MethodContext> calledMethods = new HashSet<>();
     private final Set<MethodContext> callerMethods = new HashSet<>();
+    
+    private String sourceCode;
 
     public MethodContext(MethodObject methodObject) {
         this.methodObject = methodObject;
@@ -29,6 +31,14 @@ public class MethodContext {
 
     public Set<MethodContext> getCallerMethods() {
         return callerMethods;
+    }
+    
+    public String getSourceCode() {
+        return sourceCode;
+    }
+
+    public void setSourceCode(String sourceCode) {
+        this.sourceCode = sourceCode;
     }
 
     @Override

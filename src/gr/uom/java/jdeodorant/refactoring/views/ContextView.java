@@ -217,6 +217,15 @@ public class ContextView extends ViewPart {
             TreeNode methodsNode = new TreeNode("Methods (" + cls.getMethodContexts().size() + ")", "");
             for (MethodContext m : cls.getMethodContexts()) {
                 TreeNode methodNode = new TreeNode("• " + m.getMethodObject().getName(), "");
+                
+                // Show source code snippet if available
+                String src = m.getSourceCode();
+                if (src != null) {
+                    String preview = src.length() > 300 ? src.substring(0, 300) + "..." : src;
+                    TreeNode srcNode = new TreeNode("Source Code", preview);
+                    methodNode.addChild(srcNode);
+                }
+
 
                 if (!m.getCalledMethods().isEmpty()) {
                     TreeNode callsNode = new TreeNode("Calls (" + m.getCalledMethods().size() + ")", "");
