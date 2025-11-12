@@ -5,82 +5,61 @@ import java.util.*;
 
 /**
  * A wrapper around JDeodorant's ClassObject.
- * This class only stores relationships to other contextual elements
- * (methods, fields, metrics, and inter-class dependencies).
+ * Stores field/method contexts and inter-class dependency relationships with their types.
  */
 public class ClassContext {
 
     private final ClassObject classObject;
 
-    // Internal element contexts
+    // Internal elements
     private final List<FieldContext> fieldContexts = new ArrayList<>();
     private final List<MethodContext> methodContexts = new ArrayList<>();
 
-    // Relationships between classes
-    private final Set<ClassContext> dependencyClasses = new HashSet<>();  // classes this one depends on
-    private final Set<ClassContext> dependentClasses = new HashSet<>();   // classes depending on this one
+    // Inter-class relationships
+    private final List<DependencyRelation> dependencyRelations = new ArrayList<>();
+    private final List<DependencyRelation> dependentRelations = new ArrayList<>();
 
-    // Associated metrics
+    // Metrics & source
     private MetricsContext metricsContext;
-
-    // Raw source code (attached later)
     private String sourceCode;
 
+    // Constructor
     public ClassContext(ClassObject classObject) {
         this.classObject = classObject;
     }
 
-    // --- Relationship management ---
-    public void addDependency(ClassContext dependency) {
-        dependencyClasses.add(dependency);
+    // Dependency management
+    public void addDependency(ClassContext target, String type) {
+        dependencyRelations.add(new DependencyRelation(target, type));
     }
 
-    public void addDependent(ClassContext dependent) {
-        dependentClasses.add(dependent);
+    public void addDependent(ClassContext source, String type) {
+        dependentRelations.add(new DependencyRelation(source, type));
     }
 
-    public Set<ClassContext> getDependencyClasses() {
-        return Collections.unmodifiableSet(dependencyClasses);
+    public List<DependencyRelation> getDependencyRelations() {
+        return Collections.unmodifiableList(dependencyRelations);
     }
 
-    public Set<ClassContext> getDependentClasses() {
-        return Collections.unmodifiableSet(dependentClasses);
+    public List<DependencyRelation> getDependentRelations() {
+        return Collections.unmodifiableList(dependentRelations);
     }
 
-    // --- Internal element access ---
-    public List<FieldContext> getFieldContexts() {
-        return fieldContexts;
-    }
+    // Element access
+    public List<FieldContext> getFieldContexts() { return fieldContexts; }
+    public List<MethodContext> getMethodContexts() { return methodContexts; }
 
-    public List<MethodContext> getMethodContexts() {
-        return methodContexts;
-    }
+    // Metrics
+    public MetricsContext getMetricsContext() { return metricsContext; }
+    public void setMetricsContext(MetricsContext metricsContext) { this.metricsContext = metricsContext; }
 
-    public ClassObject getClassObject() {
-        return classObject;
-    }
+    // Source code
+    public void setSourceCode(String sourceCode) { this.sourceCode = sourceCode; }
+    public String getSourceCode() { return sourceCode; }
 
-    public String getClassName() {
-        return classObject.getName();
-    }
-
-    // --- Metrics ---
-    public MetricsContext getMetricsContext() {
-        return metricsContext;
-    }
-
-    public void setMetricsContext(MetricsContext metricsContext) {
-        this.metricsContext = metricsContext;
-    }
-
-    // --- Source code ---
-    public void setSourceCode(String sourceCode) {
-        this.sourceCode = sourceCode;
-    }
-
-    public String getSourceCode() {
-        return sourceCode;
-    }
+    // ClassObject & name
+    public ClassObject getClassObject() { return classObject; }
+    public String getClassName() { return classObject.getName(); }
 
     @Override
     public String toString() {
@@ -88,7 +67,7 @@ public class ClassContext {
                 classObject.getName() +
                 ", methods=" + methodContexts.size() +
                 ", fields=" + fieldContexts.size() +
-                ", dependsOn=" + dependencyClasses.size() +
+                ", dependsOn=" + dependencyRelations.size() +
                 "]";
     }
 }

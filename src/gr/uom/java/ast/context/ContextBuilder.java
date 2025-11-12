@@ -124,8 +124,14 @@ public class ContextBuilder {
     }
     
     /**
-     * Builds global inter-class dependency relationships once for all classes.
-     * This ensures dependency and fan-in/out data is complete even before enrichment.
+     * Builds a bidirectional dependency graph for all classes in the system.
+     *
+     * Analyzes each class to identify dependencies through inheritance, fields, 
+     * method signatures, method calls, and object creation. Each dependency is 
+     * categorized by type and registered bidirectionally between source and target classes.
+     *
+     * @param objectContext the context containing all classes to analyze; 
+     *                      if null, the method returns immediately
      */
     public static void buildGlobalDependencies(ObjectContext objectContext) {
         if (objectContext == null) return;
@@ -138,57 +144,68 @@ public class ContextBuilder {
 
         for (ClassContext sourceCtx : objectContext.getClassContexts()) {
             ClassObject cls = sourceCtx.getClassObject();
-            Set<String> deps = new HashSet<>();
 
+            // Map<ClassName, Set<DependencyType>>
+            Map<String, Set<String>> depTypes = new LinkedHashMap<>();
+
+            // --- Inheritance ---
             if (cls.getSuperclass() != null)
-                deps.add(cls.getSuperclass().getClassType());
+                depTypes.computeIfAbsent(cls.getSuperclass().getClassType(), k -> new LinkedHashSet<>()).add("extends");
 
             ListIterator<TypeObject> itf = cls.getInterfaceIterator();
-            while (itf.hasNext())
-                deps.add(itf.next().getClassType());
+            while (itf.hasNext()) {
+                depTypes.computeIfAbsent(itf.next().getClassType(), k -> new LinkedHashSet<>()).add("implements");
+            }
 
+            // --- Fields ---
             ListIterator<FieldObject> fields = cls.getFieldIterator();
             while (fields.hasNext()) {
                 FieldObject f = fields.next();
                 if (f.getType() != null)
-                    deps.add(f.getType().getClassType());
+                    depTypes.computeIfAbsent(f.getType().getClassType(), k -> new LinkedHashSet<>()).add("field");
             }
 
+            // --- Methods ---
             ListIterator<MethodObject> methods = cls.getMethodIterator();
             while (methods.hasNext()) {
                 MethodObject m = methods.next();
 
                 if (m.getReturnType() != null)
-                    deps.add(m.getReturnType().getClassType());
+                    depTypes.computeIfAbsent(m.getReturnType().getClassType(), k -> new LinkedHashSet<>()).add("return type");
 
                 ListIterator<ParameterObject> params = m.getParameterListIterator();
                 while (params.hasNext()) {
                     ParameterObject p = params.next();
                     if (p.getType() != null)
-                        deps.add(p.getType().getClassType());
+                        depTypes.computeIfAbsent(p.getType().getClassType(), k -> new LinkedHashSet<>()).add("parameter");
                 }
 
                 for (MethodInvocationObject mio : m.getMethodInvocations()) {
                     if (mio.getOriginClassName() != null && !mio.getOriginClassName().equals(cls.getName()))
-                        deps.add(mio.getOriginClassName());
+                        depTypes.computeIfAbsent(mio.getOriginClassName(), k -> new LinkedHashSet<>()).add("method call");
                 }
 
                 for (CreationObject c : m.getCreations()) {
                     if (c.getType() != null)
-                        deps.add(c.getType().getClassType());
+                        depTypes.computeIfAbsent(c.getType().getClassType(), k -> new LinkedHashSet<>()).add("object creation");
                 }
             }
 
-            for (String depName : deps) {
+            // --- Register relationships (multiple per target allowed) ---
+            for (Map.Entry<String, Set<String>> entry : depTypes.entrySet()) {
+                String depName = entry.getKey();
                 ClassContext targetCtx = classMap.get(depName);
+
                 if (targetCtx != null && !depName.equals(sourceCtx.getClassName())) {
-                    sourceCtx.addDependency(targetCtx);
-                    targetCtx.addDependent(sourceCtx);
+                    for (String type : entry.getValue()) {
+                        sourceCtx.addDependency(targetCtx, type);
+                        targetCtx.addDependent(sourceCtx, type);
+                    }
                 }
             }
         }
 
-        System.out.println("[ContextBuilder] Built global dependency graph for all classes.");
+        System.out.println("[ContextBuilder] Built global dependency graph for all classes (multi-type).");
     }
 
     // -----------------------------------------------------------------------

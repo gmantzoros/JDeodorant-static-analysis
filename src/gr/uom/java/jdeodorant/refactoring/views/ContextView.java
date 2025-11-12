@@ -164,17 +164,25 @@ public class ContextView extends ViewPart {
 
         // --- Dependencies section ---
         TreeNode depsNode = new TreeNode("Dependencies", "");
-        TreeNode dependsOnNode = new TreeNode("Depends On (" + cls.getDependencyClasses().size() + ")", "");
-        for (ClassContext dep : cls.getDependencyClasses()) {
-            dependsOnNode.addChild(new TreeNode("→ " + dep.getClassName(), ""));
+        
+        // --- Depends On ---
+        List<DependencyRelation> dependsOnRelations = cls.getDependencyRelations();
+        TreeNode dependsOnNode = new TreeNode("Depends On (" + dependsOnRelations.size() + ")", "");
+        for (DependencyRelation rel : dependsOnRelations) {
+            String label = "→ " + rel.getTarget().getClassName() + " (" + rel.getType() + ")";
+            dependsOnNode.addChild(new TreeNode(label, ""));
         }
         depsNode.addChild(dependsOnNode);
 
-        TreeNode dependedByNode = new TreeNode("Depended By (" + cls.getDependentClasses().size() + ")", "");
-        for (ClassContext dep : cls.getDependentClasses()) {
-            dependedByNode.addChild(new TreeNode("← " + dep.getClassName(), ""));
+        // --- Depended By ---
+        List<DependencyRelation> dependedByRelations = cls.getDependentRelations();
+        TreeNode dependedByNode = new TreeNode("Depended By (" + dependedByRelations.size() + ")", "");
+        for (DependencyRelation rel : dependedByRelations) {
+            String label = "← " + rel.getTarget().getClassName() + " (" + rel.getType() + ")";
+            dependedByNode.addChild(new TreeNode(label, ""));
         }
         depsNode.addChild(dependedByNode);
+        
         roots.add(depsNode);
 
         // --- Fields section ---
@@ -328,15 +336,21 @@ public class ContextView extends ViewPart {
             data.put("connectivity", metrics.getConnectivity());
         }
 
-        List<String> dependsOn = new ArrayList<String>();
-        for (ClassContext dep : cls.getDependencyClasses()) {
-            dependsOn.add(dep.getClassName());
+        List<Map<String, Object>> dependsOn = new ArrayList<>();
+        for (DependencyRelation rel : cls.getDependencyRelations()) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("class", rel.getTarget().getClassName());
+            map.put("type", rel.getType());
+            dependsOn.add(map);
         }
         data.put("dependsOn", dependsOn);
 
-        List<String> dependedBy = new ArrayList<String>();
-        for (ClassContext dep : cls.getDependentClasses()) {
-            dependedBy.add(dep.getClassName());
+        List<Map<String, Object>> dependedBy = new ArrayList<>();
+        for (DependencyRelation rel : cls.getDependentRelations()) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("class", rel.getTarget().getClassName());
+            map.put("type", rel.getType());
+            dependedBy.add(map);
         }
         data.put("dependedBy", dependedBy);
 

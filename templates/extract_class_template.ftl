@@ -30,21 +30,15 @@ Metrics Overview:
 </#if>
 
 <#-- Dependencies -->
-<#if dependsOn?size gt 0 || dependedBy?size gt 0>
-Coupling Summary:
-<#if dependsOn?size gt 0>
-  - Depends on:
-    <#list dependsOn as d>    • ${d}</#list>
-<#else>
-  - No outgoing dependencies.
-</#if>
-<#if dependedBy?size gt 0>
-  - Depended on by:
-    <#list dependedBy as d>    • ${d}</#list>
-<#else>
-  - No incoming dependents.
-</#if>
-</#if>
+Depends On:
+<#list dependsOn as dep>
+  → ${dep.class} (${dep.type})
+</#list>
+
+Depended By:
+<#list dependedBy as dep>
+  ← ${dep.class} (${dep.type})
+</#list>
 
 <#-- Fields -->
 <#if fields?size gt 0>
