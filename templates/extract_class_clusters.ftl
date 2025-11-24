@@ -45,10 +45,14 @@ Fields:
 
 Methods:
 <#if methods?size gt 0>
-<#list methods as m>
-• ${m.name}
-</#list>
-<#else>No methods.</#if>
+  <#list methods as m>
+    • ${m.name}
+      (calls: <#if m.calls?size gt 0><#list m.calls as c>${c}<#if c_has_next>, </#if></#list><#else>-</#if>,
+       called by: <#if m.calledBy?size gt 0><#list m.calledBy as cb>${cb}<#if cb_has_next>, </#if></#list><#else>-</#if>)
+  </#list>
+<#else>
+  No methods.
+</#if>
 
 ---
 

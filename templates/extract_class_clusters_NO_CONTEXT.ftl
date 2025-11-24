@@ -12,22 +12,15 @@ Important:
 - Every cluster MUST contain only method names exactly as they appear in the source code.
 - Use the output format shown below exactly.
 
+---
+
+Output Format:
+{
+  "ClusterA": ["method1", "method2"],
+  "ClusterB": ["method3"]
+}
+
+Produce ONLY the JSON object.
 
 Original Source Code:
 ${sourceCode}
-
----
-
-Output Format (strict):
-Return a JSON object where each key is a new conceptual class name
-and each value is a list of method names from the original class.
-
-Example:
-{
-  "ClassA": ["method1", "method2"],
-  "ClassB": ["method3"]
-}
-
----
-
-Produce only the JSON object and nothing else.

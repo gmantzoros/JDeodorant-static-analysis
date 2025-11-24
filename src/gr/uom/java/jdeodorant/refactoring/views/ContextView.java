@@ -35,7 +35,7 @@ public class ContextView extends ViewPart {
 
     @Override
     public void createPartControl(Composite parent) {
-        // 2-column layout: TableViewer (left), Button (right)
+        // 2-column layout: TableViewer (left), Search + Button (right)
         GridLayout layout = new GridLayout(2, false);
         layout.marginWidth = 5;
         layout.marginHeight = 5;
@@ -53,13 +53,53 @@ public class ContextView extends ViewPart {
         GridData viewerData = new GridData(SWT.FILL, SWT.FILL, true, true);
         viewer.getControl().setLayoutData(viewerData);
 
-        // --- Generate Prompt Button (right side) ---
-        Composite buttonContainer = new Composite(parent, SWT.NONE);
-        buttonContainer.setLayout(new GridLayout(1, false));
-        GridData containerData = new GridData(SWT.RIGHT, SWT.TOP, false, false);
-        buttonContainer.setLayoutData(containerData);
+        // --- Right side container (Search bar + Generate Button) ---
+        Composite rightContainer = new Composite(parent, SWT.NONE);
+        GridLayout rightLayout = new GridLayout(1, false);
+        rightLayout.marginHeight = 0;
+        rightLayout.marginWidth = 0;
+        rightLayout.verticalSpacing = 10;
+        rightContainer.setLayout(rightLayout);
 
-        Button generatePromptButton = new Button(buttonContainer, SWT.PUSH);
+        GridData rightData = new GridData(SWT.RIGHT, SWT.TOP, false, false);
+        rightContainer.setLayoutData(rightData);
+
+        // --- Search Label ---
+        Label searchLabel = new Label(rightContainer, SWT.NONE);
+        searchLabel.setText("Search:");
+
+        // --- Search Text Field ---
+        Text searchText = new Text(rightContainer, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH | SWT.CANCEL);
+        GridData searchData = new GridData(SWT.FILL, SWT.TOP, false, false);
+        searchData.widthHint = 150;
+        searchText.setLayoutData(searchData);
+
+        // --- Viewer Filter ---
+        ViewerFilter filter = new ViewerFilter() {
+            @Override
+            public boolean select(Viewer viewer, Object parentElement, Object element) {
+                if (!(element instanceof ClassContext)) return true;
+
+                String query = searchText.getText().trim().toLowerCase();
+                if (query.isEmpty()) return true;
+
+                ClassContext cls = (ClassContext) element;
+                return cls.getClassName().toLowerCase().contains(query);
+            }
+        };
+        viewer.addFilter(filter);
+
+        // --- Safe async refresh to avoid endless UI recursion ---
+        searchText.addModifyListener(e -> {
+            Display.getDefault().asyncExec(() -> {
+                if (!viewer.getControl().isDisposed()) {
+                    viewer.refresh();
+                }
+            });
+        });
+
+        // --- Generate Prompt Button ---
+        Button generatePromptButton = new Button(rightContainer, SWT.PUSH);
         generatePromptButton.setText("Generate Prompt");
         GridData buttonData = new GridData(SWT.FILL, SWT.TOP, false, false);
         buttonData.widthHint = 130;
@@ -101,6 +141,50 @@ public class ContextView extends ViewPart {
         this.objectContext = context;
         List<ClassContext> classes = new ArrayList<>(context.getClassContexts());
         viewer.setInput(classes);
+    }
+    
+    /**
+     * Shortens fully-qualified names by keeping only the last N segments.
+     * Example: a.b.c.d.Class -> c.d.Class
+     */
+    private String shortenPackage(String fullName, int keepLastN) {
+        if (fullName == null) return "";
+        String[] parts = fullName.split("\\.");
+        if (parts.length <= keepLastN) return fullName;
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = parts.length - keepLastN; i < parts.length; i++) {
+            if (sb.length() > 0) sb.append(".");
+            sb.append(parts[i]);
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Removes all import statements from a Java source file.
+     */
+    private String removeImports(String src) {
+        if (src == null) return "";
+
+        StringBuilder sb = new StringBuilder();
+        BufferedReader reader = new BufferedReader(new StringReader(src));
+        String line;
+
+        try {
+            while ((line = reader.readLine()) != null) {
+
+                // skip: import x.y.z;
+                if (line.trim().startsWith("import ")) {
+                    continue;
+                }
+
+                sb.append(line).append('\n');
+            }
+        } catch (IOException e) {
+            return src; // should never happen with StringReader
+        }
+
+        return sb.toString().trim();
     }
 
     /**
@@ -334,7 +418,9 @@ public class ContextView extends ViewPart {
      */
     private Map<String, Object> buildPromptDataModel(ClassContext cls) {
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("className", cls.getClassName());
+
+        // Shorten class name
+        data.put("className", shortenPackage(cls.getClassName(), 3));
 
         MetricsContext metrics = cls.getMetricsContext();
         if (metrics != null) {
@@ -345,24 +431,27 @@ public class ContextView extends ViewPart {
             data.put("connectivity", metrics.getConnectivity());
         }
 
+        // --- DEPENDS ON ---
         List<Map<String, Object>> dependsOn = new ArrayList<>();
         for (DependencyRelation rel : cls.getDependencyRelations()) {
             Map<String, Object> map = new HashMap<>();
-            map.put("class", rel.getTarget().getClassName());
+            map.put("class", shortenPackage(rel.getTarget().getClassName(), 3));
             map.put("type", rel.getType());
             dependsOn.add(map);
         }
         data.put("dependsOn", dependsOn);
 
+        // --- DEPENDED BY ---
         List<Map<String, Object>> dependedBy = new ArrayList<>();
         for (DependencyRelation rel : cls.getDependentRelations()) {
             Map<String, Object> map = new HashMap<>();
-            map.put("class", rel.getTarget().getClassName());
+            map.put("class", shortenPackage(rel.getTarget().getClassName(), 3));
             map.put("type", rel.getType());
             dependedBy.add(map);
         }
         data.put("dependedBy", dependedBy);
 
+        // --- FIELDS ---
         List<Map<String, Object>> fields = new ArrayList<Map<String, Object>>();
         for (FieldContext f : cls.getFieldContexts()) {
             Map<String, Object> fm = new HashMap<String, Object>();
@@ -370,13 +459,17 @@ public class ContextView extends ViewPart {
 
             List<String> readBy = new ArrayList<String>();
             for (MethodContext m : f.getReadByMethods()) {
-                readBy.add("[Read] " + m.getMethodObject().getClassName() + "." + m.getMethodObject().getName());
+                readBy.add("[R] "
+                        + shortenPackage(m.getMethodObject().getClassName(), 3)
+                        + "." + m.getMethodObject().getName());
             }
             fm.put("readBy", readBy);
 
             List<String> writtenBy = new ArrayList<String>();
             for (MethodContext m : f.getWrittenByMethods()) {
-                writtenBy.add("[Write] " + m.getMethodObject().getClassName() + "." + m.getMethodObject().getName());
+                writtenBy.add("[W] "
+                        + shortenPackage(m.getMethodObject().getClassName(), 3)
+                        + "." + m.getMethodObject().getName());
             }
             fm.put("writtenBy", writtenBy);
 
@@ -384,6 +477,7 @@ public class ContextView extends ViewPart {
         }
         data.put("fields", fields);
 
+        // --- METHODS ---
         List<Map<String, Object>> methods = new ArrayList<Map<String, Object>>();
         for (MethodContext m : cls.getMethodContexts()) {
             Map<String, Object> mm = new HashMap<String, Object>();
@@ -391,13 +485,17 @@ public class ContextView extends ViewPart {
 
             List<String> calls = new ArrayList<String>();
             for (MethodContext called : m.getCalledMethods()) {
-                calls.add("→ " + called.getMethodObject().getClassName() + "." + called.getMethodObject().getName());
+                calls.add("→ "
+                        + shortenPackage(called.getMethodObject().getClassName(), 3)
+                        + "." + called.getMethodObject().getName());
             }
             mm.put("calls", calls);
 
             List<String> calledBy = new ArrayList<String>();
             for (MethodContext caller : m.getCallerMethods()) {
-                calledBy.add("← " + caller.getMethodObject().getClassName() + "." + caller.getMethodObject().getName());
+                calledBy.add("← "
+                        + shortenPackage(caller.getMethodObject().getClassName(), 3)
+                        + "." + caller.getMethodObject().getName());
             }
             mm.put("calledBy", calledBy);
 
@@ -405,8 +503,13 @@ public class ContextView extends ViewPart {
         }
         data.put("methods", methods);
 
+        // --- SOURCE CODE ---
         String source = cls.getSourceCode();
+        if (source != null) {
+            source = removeImports(source);
+        }
         data.put("sourceCode", source != null ? source : "[Source unavailable]");
+
         return data;
     }
 
