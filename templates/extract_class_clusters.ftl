@@ -11,6 +11,10 @@ Important:
 - Output ONLY the clusters of methods grouped by the conceptual classes you recommend.
 - Every cluster MUST contain only method names exactly as they appear in the source code.
 - Use the output format shown below exactly.
+- You MUST base your clustering decisions ONLY on the provided metrics, dependencies, field usage, method call relationships, workflow entry points, and workflow membership.
+- You MUST treat workflow entry points and workflow membership as primary signals when grouping methods.
+- Methods that share workflow roots should be grouped together.
+- Helper methods that belong to multiple workflows should be grouped according to the workflow they most strongly support.
 
 ---
 
@@ -19,11 +23,11 @@ Context and Analysis:
 Class Name: ${className}
 
 Metrics:
-<#if nom??>• NOM: ${nom}</#if>
-<#if noc??> • NOC: ${noc}</#if>
-<#if cbo??> • CBO: ${cbo}</#if>
-<#if lcom??> • LCOM: ${lcom}</#if>
-<#if connectivity??> • Conn: ${connectivity}</#if>
+<#if nom?? && (nom?number > 0)>• NOM: ${nom}</#if>
+<#if noc?? && (noc?number > 0)> • NOC: ${noc}</#if>
+<#if cbo?? && (cbo?number > 0)> • CBO: ${cbo}</#if>
+<#if lcom?? && (lcom?number > 0)> • LCOM: ${lcom}</#if>
+<#if connectivity?? && (connectivity?number > 0)> • Conn: ${connectivity}</#if>
 
 Dependencies:
 Depends On:
@@ -52,6 +56,26 @@ Methods:
   </#list>
 <#else>
   No methods.
+</#if>
+
+---
+
+Workflow Analysis:
+
+Workflow Entry Points:
+<#if workflowRoots?size gt 0>
+• <#list workflowRoots as r>${r}<#if r_has_next>, </#if></#list>
+<#else>
+None
+</#if>
+
+Method → Workflow Roots:
+<#if workflowMembership?size gt 0>
+<#list workflowMembership as wm>
+• ${wm.method}: <#if wm.roots?size gt 0>[<#list wm.roots as rt>${rt}<#if rt_has_next>, </#if></#list>]<#else>[]</#if>
+</#list>
+<#else>
+None
 </#if>
 
 ---

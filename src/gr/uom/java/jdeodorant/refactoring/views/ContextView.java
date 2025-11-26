@@ -269,6 +269,31 @@ public class ContextView extends ViewPart {
         
         roots.add(depsNode);
 
+        // --- Workflow Analysis section ---
+        TreeNode workflowNode = new TreeNode("Workflow Analysis", "");
+
+        // Workflow Roots (external entrypoints)
+        List<String> rootMethods = cls.getWorkflowRoots();
+        TreeNode rootsNode = new TreeNode("Workflow Entry Points (" + rootMethods.size() + ")", "");
+        for (String r : rootMethods) {
+            rootsNode.addChild(new TreeNode("• " + r, ""));
+        }
+        workflowNode.addChild(rootsNode);
+
+        // Workflow Membership
+        TreeNode membershipNode = new TreeNode("Method → Workflow Roots", "");
+        for (Map.Entry<String, List<String>> entry : cls.getWorkflowMembership().entrySet()) {
+            String method = entry.getKey();
+            List<String> roots_workflow = entry.getValue();
+
+            String label = method + " → " + (roots_workflow.isEmpty() ? "[]" : roots_workflow.toString());
+            membershipNode.addChild(new TreeNode(label, ""));
+        }
+        workflowNode.addChild(membershipNode);
+
+        // Add to root
+        roots.add(workflowNode);
+
         // --- Fields section ---
         if (!cls.getFieldContexts().isEmpty()) {
             TreeNode fieldsNode = new TreeNode("Fields (" + cls.getFieldContexts().size() + ")", "");
@@ -509,6 +534,19 @@ public class ContextView extends ViewPart {
             source = removeImports(source);
         }
         data.put("sourceCode", source != null ? source : "[Source unavailable]");
+        
+        // --- WORKFLOW ROOTS ---
+        data.put("workflowRoots", cls.getWorkflowRoots());
+
+        // --- WORKFLOW MEMBERSHIP ---
+        List<Map<String, Object>> workflowMembership = new ArrayList<>();
+        for (Map.Entry<String, List<String>> e : cls.getWorkflowMembership().entrySet()) {
+            Map<String, Object> entry = new HashMap<>();
+            entry.put("method", e.getKey());
+            entry.put("roots", e.getValue());
+            workflowMembership.add(entry);
+        }
+        data.put("workflowMembership", workflowMembership);
 
         return data;
     }

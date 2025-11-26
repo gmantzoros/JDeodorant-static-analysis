@@ -22,6 +22,10 @@ public class ClassContext {
     // Metrics & source
     private MetricsContext metricsContext;
     private String sourceCode;
+    
+    //Workflow Map
+    private List<String> workflowRoots = new ArrayList<>();
+    private Map<String, List<String>> workflowMembership = new LinkedHashMap<>();
 
     // Constructor
     public ClassContext(ClassObject classObject) {
@@ -45,7 +49,23 @@ public class ClassContext {
         return Collections.unmodifiableList(dependentRelations);
     }
 
-    // Element access
+    public List<String> getWorkflowRoots() {
+		return workflowRoots;
+	}
+
+	public void setWorkflowRoots(List<String> workflowRoots) {
+		this.workflowRoots = workflowRoots;
+	}
+
+	public Map<String, List<String>> getWorkflowMembership() {
+		return workflowMembership;
+	}
+
+	public void setWorkflowMembership(Map<String, List<String>> workflowMembership) {
+		this.workflowMembership = workflowMembership;
+	}
+
+	// Element access
     public List<FieldContext> getFieldContexts() { return fieldContexts; }
     public List<MethodContext> getMethodContexts() { return methodContexts; }
 

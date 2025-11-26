@@ -4,22 +4,14 @@ import gr.uom.java.ast.*;
 import gr.uom.java.ast.decomposition.cfg.PlainVariable;
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
-/**
- * Lazily builds a high-level ObjectContext model from JDeodorant's AST representation.
- * - Initial build parses classes only (fast)
- * - Relationships, metrics, and source code are computed on demand
- */
 public class ContextBuilder {
 
-    /**
-     * Builds the initial ObjectContext for a given Java project.
-     * Only parses classes and creates minimal contexts (lazy approach).
-     */
     public static ObjectContext buildProjectContext(IJavaProject javaProject) {
         if (javaProject == null) {
             System.out.println("[ContextBuilder] Provided Java project is null.");
@@ -48,20 +40,17 @@ public class ContextBuilder {
         }
 
         ObjectContext objectContext = new ObjectContext(system);
-        buildClassContexts(objectContext); // only build minimal class list
-        buildGlobalDependencies(objectContext); // Builds dependencies for all classes
+        buildClassContexts(objectContext);
+        buildGlobalDependencies(objectContext);
 
         System.out.println("[ContextBuilder] Created " + objectContext.getClassContexts().size() + " ClassContexts (lazy).");
         return objectContext;
     }
 
-    // -----------------------------------------------------------------------
-    // LAZY ENRICHMENT
-    // -----------------------------------------------------------------------
+    // --------------------------------------------------------------------
+    // LAZY ENRICH
+    // --------------------------------------------------------------------
 
-    /**
-     * Enriches a single ClassContext on demand — computes metrics, relationships, and source code.
-     */
     public static void enrichClassContext(ObjectContext objectContext, ClassContext target) {
         if (objectContext == null || target == null) return;
 
@@ -72,16 +61,16 @@ public class ContextBuilder {
         System.out.println("[ContextBuilder] Enriching class: " + target.getClassName());
 
         try {
-            // Attach source code for class and method
             attachSourceCodeForClass(cls, target);
             attachSourceCodeForMethods(cls, target);
 
-            // Add metrics if not already set
             if (target.getMetricsContext() == null)
                 target.setMetricsContext(new MetricsContext(cls));
 
-            // Build local relationships only for this class
             buildLocalRelationships(objectContext, target);
+
+            // NEW: compute workflow roots
+            computeWorkflowRootAnalysis(target);
 
             System.out.println("[ContextBuilder] Class enriched successfully: " + target.getClassName());
         } catch (Exception e) {
@@ -90,57 +79,42 @@ public class ContextBuilder {
         }
     }
 
-    /**
-     * Builds local relationships within a class, including field access and method calls.
-     * <p>
-     * Analyzes each method in the target class to identify:
-     *   Field reads and writes
-     *   Internal method calls (within the same class)
-     *   External method calls (to other classes)
-     *   
-     * All relationships are registered bidirectionally between source and target elements.
-     *
-     * @param objectContext the context containing all classes in the system
-     * @param target the class to analyze for local relationships
-     */
+    // --------------------------------------------------------------------
+    // LOCAL RELATIONSHIPS (calls + fields)
+    // --------------------------------------------------------------------
+
     private static void buildLocalRelationships(ObjectContext objectContext, ClassContext target) {
-        // Map field names for quick lookup
         Map<String, FieldContext> fieldMap = new HashMap<>();
         for (FieldContext f : target.getFieldContexts()) {
             fieldMap.put(f.getFieldObject().getName(), f);
         }
 
-        // Access to all ClassContexts for cross-class calls
         Map<String, ClassContext> classMap = new HashMap<>();
         for (ClassContext ctx : objectContext.getClassContexts()) {
             classMap.put(ctx.getClassName(), ctx);
         }
 
-        // --- Analyze each method ---
         for (MethodContext m : target.getMethodContexts()) {
             MethodObject mo = m.getMethodObject();
 
-            // --- Field reads ---
             for (PlainVariable usedVar : mo.getUsedFieldsThroughThisReference()) {
                 FieldContext f = fieldMap.get(usedVar.getVariableName());
                 if (f != null) f.addReadByMethod(m);
             }
 
-            // --- Field writes ---
             for (PlainVariable writtenVar : mo.getDefinedFieldsThroughThisReference()) {
                 FieldContext f = fieldMap.get(writtenVar.getVariableName());
                 if (f != null) f.addWrittenByMethod(m);
             }
 
-            // --- Method calls (local + external) ---
             for (MethodInvocationObject mio : mo.getMethodInvocations()) {
                 String originClass = mio.getOriginClassName();
 
-                // Case 1: No origin (Same class)
+                // internal call
                 if (originClass == null || originClass.equals(target.getClassName())) {
                     for (MethodContext targetMethod : target.getMethodContexts()) {
                         if (targetMethod.getMethodObject().getSignature().equals(mio.getSignature())) {
-                            // Symmetric internal link
+
                             m.getCalledMethods().add(targetMethod);
                             targetMethod.getCallerMethods().add(m);
                             break;
@@ -148,15 +122,19 @@ public class ContextBuilder {
                     }
                 }
 
-                // Case 2: External class call
+                // external call
                 else {
-                    ClassContext externalClassCtx = classMap.get(originClass);
-                    if (externalClassCtx != null && !originClass.equals(target.getClassName())) {
-                        for (MethodContext targetMethod : externalClassCtx.getMethodContexts()) {
+                    ClassContext externalClass = classMap.get(originClass);
+                    if (externalClass != null && !originClass.equals(target.getClassName())) {
+                        for (MethodContext targetMethod : externalClass.getMethodContexts()) {
                             if (targetMethod.getMethodObject().getSignature().equals(mio.getSignature())) {
-                                // --- Symmetric cross-class link ---
+
                                 m.getCalledMethods().add(targetMethod);
                                 targetMethod.getCallerMethods().add(m);
+
+                                //mark external caller
+                                targetMethod.getExternalCallers().add(m);
+
                                 break;
                             }
                         }
@@ -165,17 +143,62 @@ public class ContextBuilder {
             }
         }
     }
-    
-    /**
-     * Builds a bidirectional dependency graph for all classes in the system.
-     *
-     * Analyzes each class to identify dependencies through inheritance, fields, 
-     * method signatures, method calls, and object creation. Each dependency is 
-     * categorized by type and registered bidirectionally between source and target classes.
-     *
-     * @param objectContext the context containing all classes to analyze; 
-     *                      if null, the method returns immediately
-     */
+
+    // --------------------------------------------------------------------
+    // WORKFLOW ROOT ANALYSIS 
+    // --------------------------------------------------------------------
+
+    private static void computeWorkflowRootAnalysis(ClassContext classCtx) {
+        // Compute workflow roots for each method
+        for (MethodContext m : classCtx.getMethodContexts()) {
+            Set<MethodContext> roots = new HashSet<>();
+            findWorkflowRootsRecursive(m, roots);
+            m.setWorkflowRoots(roots);
+        }
+
+        // Build class-level summary: which methods are root entrypoints
+        List<String> rootNames = new ArrayList<>();
+        Map<String, List<String>> membership = new LinkedHashMap<>();
+
+        for (MethodContext m : classCtx.getMethodContexts()) {
+
+            // direct external callers → this method is a workflow entry
+            if (!m.getExternalCallers().isEmpty()) {
+                rootNames.add(m.getMethodObject().getName());
+            }
+
+            List<String> rootList = m.getWorkflowRoots().stream()
+                    .map(x -> x.getMethodObject().getName())
+                    .sorted()
+                    .collect(Collectors.toList());
+
+            membership.put(m.getMethodObject().getName(), rootList);
+        }
+
+        classCtx.setWorkflowRoots(rootNames);
+        classCtx.setWorkflowMembership(membership);
+    }
+
+    private static void findWorkflowRootsRecursive(MethodContext m, Set<MethodContext> roots) {
+        for (MethodContext caller : m.getCallerMethods()) {
+
+            String callerClass = caller.getMethodObject().getClassName();
+            String calleeClass = m.getMethodObject().getClassName();
+
+            // external caller → workflow root
+            if (!callerClass.equals(calleeClass)) {
+                roots.add(caller);
+            } else {
+                // internal caller → keep climbing
+                findWorkflowRootsRecursive(caller, roots);
+            }
+        }
+    }
+
+    // --------------------------------------------------------------------
+    // DEPENDENCIES 
+    // --------------------------------------------------------------------
+
     public static void buildGlobalDependencies(ObjectContext objectContext) {
         if (objectContext == null) return;
 
@@ -188,10 +211,8 @@ public class ContextBuilder {
         for (ClassContext sourceCtx : objectContext.getClassContexts()) {
             ClassObject cls = sourceCtx.getClassObject();
 
-            // Each target class maps to a set of unique dependency types
             Map<String, Set<String>> depTypes = new LinkedHashMap<>();
 
-            // --- Inheritance ---
             if (cls.getSuperclass() != null)
                 depTypes.computeIfAbsent(cls.getSuperclass().getClassType(), k -> new LinkedHashSet<>()).add("extends");
 
@@ -200,7 +221,6 @@ public class ContextBuilder {
                 depTypes.computeIfAbsent(itf.next().getClassType(), k -> new LinkedHashSet<>()).add("implements");
             }
 
-            // --- Fields ---
             ListIterator<FieldObject> fields = cls.getFieldIterator();
             while (fields.hasNext()) {
                 FieldObject f = fields.next();
@@ -208,7 +228,6 @@ public class ContextBuilder {
                     depTypes.computeIfAbsent(f.getType().getClassType(), k -> new LinkedHashSet<>()).add("field");
             }
 
-            // --- Methods ---
             ListIterator<MethodObject> methods = cls.getMethodIterator();
             while (methods.hasNext()) {
                 MethodObject m = methods.next();
@@ -236,16 +255,16 @@ public class ContextBuilder {
                 }
             }
 
-            // --- Register unique relationships ---
             for (Map.Entry<String, Set<String>> entry : depTypes.entrySet()) {
                 String depName = entry.getKey();
                 ClassContext targetCtx = classMap.get(depName);
 
                 if (targetCtx != null && !depName.equals(sourceCtx.getClassName())) {
                     for (String type : entry.getValue()) {
-                        boolean alreadyExists = sourceCtx.getDependencyRelations().stream()
-                            .anyMatch(r -> r.getTarget() == targetCtx && r.getType().equals(type));
-                        if (!alreadyExists) {
+                        boolean exists = sourceCtx.getDependencyRelations().stream()
+                                .anyMatch(r -> r.getTarget() == targetCtx && r.getType().equals(type));
+
+                        if (!exists) {
                             sourceCtx.addDependency(targetCtx, type);
                             targetCtx.addDependent(sourceCtx, type);
                         }
@@ -257,9 +276,9 @@ public class ContextBuilder {
         System.out.println("[ContextBuilder] Built global dependency graph for all classes (deduplicated per type).");
     }
 
-    // -----------------------------------------------------------------------
-    // BASIC CONTEXT INITIALIZATION
-    // -----------------------------------------------------------------------
+    // --------------------------------------------------------------------
+    // INITIALIZATION
+    // --------------------------------------------------------------------
 
     private static void buildClassContexts(ObjectContext objectContext) {
         SystemObject system = objectContext.getSystemObject();
@@ -278,16 +297,15 @@ public class ContextBuilder {
                 classCtx.getMethodContexts().add(new MethodContext(method));
             }
 
-            // NOTE: Metrics and relationships will be filled lazily
             classContexts.add(classCtx);
         }
 
         objectContext.setClassContexts(classContexts);
     }
 
-    // -----------------------------------------------------------------------
+    // --------------------------------------------------------------------
     // SOURCE CODE
-    // -----------------------------------------------------------------------
+    // --------------------------------------------------------------------
 
     private static void attachSourceCodeForClass(ClassObject classObj, ClassContext ctx) {
         try {
@@ -313,10 +331,10 @@ public class ContextBuilder {
             System.err.println("[ContextBuilder] Failed to read source for class: " + ctx.getClassName());
         }
     }
-    
+
     private static void attachSourceCodeForMethods(ClassObject classObj, ClassContext ctx) {
         String classSource = ctx.getSourceCode();
-        if (classSource == null) return; // No point continuing if class source is missing
+        if (classSource == null) return;
 
         try {
             for (MethodContext methodCtx : ctx.getMethodContexts()) {
@@ -345,9 +363,9 @@ public class ContextBuilder {
         }
     }
 
-    // -----------------------------------------------------------------------
+    // --------------------------------------------------------------------
     // UTILITIES
-    // -----------------------------------------------------------------------
+    // --------------------------------------------------------------------
 
     private static void logProjectStructure(IJavaProject javaProject) {
         try {
