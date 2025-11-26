@@ -13,8 +13,18 @@ Important:
 - Use the output format shown below exactly.
 - You MUST base your clustering decisions ONLY on the provided metrics, dependencies, field usage, method call relationships, workflow entry points, and workflow membership.
 - You MUST treat workflow entry points and workflow membership as primary signals when grouping methods.
-- Methods that share workflow roots should be grouped together.
-- Helper methods that belong to multiple workflows should be grouped according to the workflow they most strongly support.
+
+Workflow Rules:
+-Workflow entry points define orchestration clusters.
+-Only workflow entry points and the primary orchestrator method belong in a workflow cluster.
+-Workflow membership does not pull helper methods into workflow clusters unless they perform orchestration.
+
+Helper Rules:
+-Helper methods must be clustered by functional responsibility, not workflow membership.
+-Helpers shared across workflows remain in responsibility-based clusters.
+
+Root Rules:
+-Methods sharing a workflow root belong together only if they are entry points or orchestrators.
 
 ---
 
