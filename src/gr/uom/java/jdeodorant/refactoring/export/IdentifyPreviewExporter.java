@@ -82,7 +82,7 @@ public final class IdentifyPreviewExporter {
         }
 
         // Build aggregated JSON (ONE file with an array of candidates)
-        String json = buildGroupJson(td, candidates);
+        String json = buildMinimalJson(td, candidates);
 
         // Write under <project>/jdeodorant_cards/<Class>_identify_preview.json
         IFolder folder = project.getFolder("jdeodorant_cards");
@@ -155,6 +155,36 @@ public final class IdentifyPreviewExporter {
         sb.append("}").append(nl);
 
         sb.append("}").append(nl);
+        return sb.toString();
+    }
+    
+    private static String buildMinimalJson(TypeDeclaration td, List<Candidate> candidates) {
+        String nl = "\n";
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("{").append(nl);
+        sb.append("\"source_type_name\": \"").append(td.getName().getIdentifier()).append("\",").append(nl);
+        sb.append("\"candidates\": [").append(nl);
+
+        for (int i = 0; i < candidates.size(); i++) {
+            Candidate c = candidates.get(i);
+            sb.append("  {").append(nl);
+            sb.append("    \"methods\": [");
+
+            List<String> methodNames = new ArrayList<>();
+            for (MethodDeclaration m : c.methods) {
+                methodNames.add("\"" + m.getName().getIdentifier() + "\"");
+            }
+
+            sb.append(String.join(", ", methodNames));
+            sb.append("]").append(nl);
+            sb.append("  }");
+
+            if (i < candidates.size() - 1) sb.append(",");
+            sb.append(nl);
+        }
+
+        sb.append("]}").append(nl);
         return sb.toString();
     }
 
