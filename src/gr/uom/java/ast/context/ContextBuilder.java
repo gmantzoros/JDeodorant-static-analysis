@@ -69,9 +69,6 @@ public class ContextBuilder {
 
             buildLocalRelationships(objectContext, target);
 
-            // NEW: compute workflow roots
-            computeWorkflowRootAnalysis(target);
-
             System.out.println("[ContextBuilder] Class enriched successfully: " + target.getClassName());
         } catch (Exception e) {
             System.err.println("[ContextBuilder] Error enriching class: " + target.getClassName());
@@ -148,52 +145,6 @@ public class ContextBuilder {
     // WORKFLOW ROOT ANALYSIS 
     // --------------------------------------------------------------------
 
-    private static void computeWorkflowRootAnalysis(ClassContext classCtx) {
-        // Compute workflow roots for each method
-        for (MethodContext m : classCtx.getMethodContexts()) {
-            Set<MethodContext> roots = new HashSet<>();
-            findWorkflowRootsRecursive(m, roots);
-            m.setWorkflowRoots(roots);
-        }
-
-        // Build class-level summary: which methods are root entrypoints
-        List<String> rootNames = new ArrayList<>();
-        Map<String, List<String>> membership = new LinkedHashMap<>();
-
-        for (MethodContext m : classCtx.getMethodContexts()) {
-
-            // direct external callers → this method is a workflow entry
-            if (!m.getExternalCallers().isEmpty()) {
-                rootNames.add(m.getMethodObject().getName());
-            }
-
-            List<String> rootList = m.getWorkflowRoots().stream()
-                    .map(x -> x.getMethodObject().getName())
-                    .sorted()
-                    .collect(Collectors.toList());
-
-            membership.put(m.getMethodObject().getName(), rootList);
-        }
-
-        classCtx.setWorkflowRoots(rootNames);
-        classCtx.setWorkflowMembership(membership);
-    }
-
-    private static void findWorkflowRootsRecursive(MethodContext m, Set<MethodContext> roots) {
-        for (MethodContext caller : m.getCallerMethods()) {
-
-            String callerClass = caller.getMethodObject().getClassName();
-            String calleeClass = m.getMethodObject().getClassName();
-
-            // external caller → workflow root
-            if (!callerClass.equals(calleeClass)) {
-                roots.add(caller);
-            } else {
-                // internal caller → keep climbing
-                findWorkflowRootsRecursive(caller, roots);
-            }
-        }
-    }
 
     // --------------------------------------------------------------------
     // DEPENDENCIES 

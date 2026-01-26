@@ -11,20 +11,7 @@ Important:
 - Output ONLY the clusters of methods grouped by the conceptual classes you recommend.
 - Every cluster MUST contain only method names exactly as they appear in the source code.
 - Use the output format shown below exactly.
-- You MUST base your clustering decisions ONLY on the provided metrics, dependencies, field usage, method call relationships, workflow entry points, and workflow membership.
-- You MUST treat workflow entry points and workflow membership as primary signals when grouping methods.
-
-Workflow Rules:
--Workflow entry points define orchestration clusters.
--Only workflow entry points and the primary orchestrator method belong in a workflow cluster.
--Workflow membership does not pull helper methods into workflow clusters unless they perform orchestration.
-
-Helper Rules:
--Helper methods must be clustered by functional responsibility, not workflow membership.
--Helpers shared across workflows remain in responsibility-based clusters.
-
-Root Rules:
--Methods sharing a workflow root belong together only if they are entry points or orchestrators.
+- You MUST base your clustering decisions ONLY on the provided metrics, dependencies, field usage, method call relationships.
 
 ---
 
@@ -32,12 +19,7 @@ Context and Analysis:
 
 Class Name: ${className}
 
-Metrics:
-<#if nom?? && (nom?number > 0)>• NOM: ${nom}</#if>
-<#if noc?? && (noc?number > 0)> • NOC: ${noc}</#if>
-<#if cbo?? && (cbo?number > 0)> • CBO: ${cbo}</#if>
-<#if lcom?? && (lcom?number > 0)> • LCOM: ${lcom}</#if>
-<#if connectivity?? && (connectivity?number > 0)> • Conn: ${connectivity}</#if>
+
 
 Dependencies:
 Depends On:
