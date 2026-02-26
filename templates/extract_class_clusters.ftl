@@ -19,6 +19,15 @@ Context and Analysis:
 
 Class Name: ${className}
 
+<#-- Metrics -->
+<#if nom?? || noc?? || cbo?? || lcom?? || connectivity??>
+Metrics:
+<#if nom??>• NOM: ${nom}</#if>
+<#if noc??> • NOC: ${noc}</#if>
+<#if cbo??> • CBO: ${cbo}</#if>
+<#if lcom??> • LCOM: ${lcom}</#if>
+<#if connectivity??> • Conn: ${connectivity}</#if>
+</#if>
 
 
 Dependencies:
@@ -48,26 +57,6 @@ Methods:
   </#list>
 <#else>
   No methods.
-</#if>
-
----
-
-Workflow Analysis:
-
-Workflow Entry Points:
-<#if workflowRoots?size gt 0>
-• <#list workflowRoots as r>${r}<#if r_has_next>, </#if></#list>
-<#else>
-None
-</#if>
-
-Method → Workflow Roots:
-<#if workflowMembership?size gt 0>
-<#list workflowMembership as wm>
-• ${wm.method}: <#if wm.roots?size gt 0>[<#list wm.roots as rt>${rt}<#if rt_has_next>, </#if></#list>]<#else>[]</#if>
-</#list>
-<#else>
-None
 </#if>
 
 ---
