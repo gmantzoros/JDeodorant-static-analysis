@@ -1,0 +1,27 @@
+{
+  "ProcessBuilderCluster": [
+    "getProcess",
+    "prepareOutputDirectory",
+    "addDownloadSpecificOptions",
+    "addVideoOptions",
+    "addAudioOptions",
+    "addCommonOptions",
+    "addSubtitleOptions"
+  ],
+  "SubtitleCleaningCluster": [
+    "cleanSubtitleFiles"
+  ],
+  "FilenameSanitizationCluster": [
+    "getSafeTitle",
+    "sanitizeFileName",
+    "safeFeedTitle"
+  ],
+  "FeedContextResolutionCluster": [
+    "resolveFeedContext",
+    "buildFeedContext"
+  ],
+  "EpisodeUpdateCluster": [
+    "updateEpisodeWithRetry",
+    "incrementRetryNumber"
+  ]
+}

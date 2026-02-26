@@ -1,0 +1,19 @@
+{
+  "RequestOutputWriter": [
+    "buildRequests",
+    "writeRequest"
+  ],
+  "MethodParameterProcessor": [
+    "processMethodParameters",
+    "getLocalVars",
+    "processMethodArgs",
+    "getCodeVar",
+    "processMethodArg",
+    "processAnnotatedArg",
+    "processUnannotatedArg"
+  ],
+  "MethodAnnotationProcessor": [
+    "processMethod",
+    "processMethodAnnotations"
+  ]
+}

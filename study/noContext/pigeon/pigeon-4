@@ -1,0 +1,15 @@
+{
+  "CoverFileHandler": [
+    "saveFeedCover",
+    "deleteFeedCover",
+    "getFeedCover"
+  ],
+  "SubtitleLookup": [
+    "getSubtitleFile",
+    "getAvailableSubtitles"
+  ],
+  "MediaFileAccessCheck": [
+    "getAudioFile",
+    "getSubtitleFile"
+  ]
+}

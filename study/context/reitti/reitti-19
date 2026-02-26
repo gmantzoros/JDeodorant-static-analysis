@@ -1,0 +1,16 @@
+{
+  "PathSegmentationHelper": [
+    "loadSegmentsInBoundingBoxAndTime",
+    "extractPathSegments",
+    "isPointInBox",
+    "toLocationPoint"
+  ],
+  "LocationPointMapping": [
+    "toLocationPoint",
+    "getLatestLocationForCurrentUser"
+  ],
+  "RawLocationPointsRetrieval": [
+    "getRawLocationPointsForCurrentUser",
+    "getRawLocationPoints"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "SecretDetectionCandidate": [
+    "calculateEntropy",
+    "isLikelyText",
+    "isBase64Like",
+    "isHexLike",
+    "getSecretReason"
+  ],
+  "UrlPathExtractionCandidate": [
+    "extractUrlsAndPaths",
+    "fallbackParsing"
+  ]
+}

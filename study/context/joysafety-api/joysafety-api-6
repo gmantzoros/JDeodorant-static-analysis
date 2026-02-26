@@ -1,0 +1,6 @@
+{
+  "RedisConnectionInitializer": ["init"],
+  "RedisExecutionCore": ["execute"],
+  "RedisListOperations": ["lpush", "rpop", "rpopN", "lrange", "llen"],
+  "RedisLockingOperations": ["lock", "unlock"]
+}

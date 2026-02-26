@@ -1,0 +1,33 @@
+{
+  "ConfValidation": [
+    "fullCheck",
+    "checkConfArray",
+    "checkConf",
+    "checkRouter",
+    "checkSimpleNext",
+    "checkGroovy",
+    "checkFunction"
+  ],
+  "DagVersioning": [
+    "newVersion",
+    "allVersion",
+    "newDagVersion"
+  ],
+  "DagActivationLifecycle": [
+    "dagOnline",
+    "dagOffline",
+    "offlineAndOnline",
+    "activeConf",
+    "upgrade"
+  ],
+  "DagRetrieval": [
+    "getDag",
+    "listAllVersion",
+    "allActiveConf"
+  ],
+  "DagCreationValidation": [
+    "newDag",
+    "cannotExistOnline",
+    "fullCheck"
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "SearchExecutionHandler": ["searchPhotosForRange", "convertToPhotoResponses"],
+  "ImageProxyHandler": ["proxyImageRequest", "downloadImage", "getExtensionFromContentType"],
+  "IntegrationPersistenceHandler": ["getIntegrationForUser", "saveIntegration"]
+}

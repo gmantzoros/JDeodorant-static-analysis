@@ -1,0 +1,7 @@
+{
+"source_type_name": "SessionServiceImpl",
+"candidates": [
+  {
+    "methods": ["buildLastUserReq", "buildLastUserReqFromOpenai"]
+  }
+]}

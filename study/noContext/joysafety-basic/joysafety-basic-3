@@ -1,0 +1,14 @@
+{
+  "SignatureHandling": [
+    "sign",
+    "setAccessKey",
+    "setPlainText",
+    "setSignature",
+    "getAccessKey",
+    "getPlainText"
+  ],
+  "MessageRoleDetection": [
+    "fromRobot",
+    "fromUser"
+  ]
+}

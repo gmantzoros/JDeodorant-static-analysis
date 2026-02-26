@@ -1,0 +1,7 @@
+{
+"source_type_name": "DefenseApiServiceImpl",
+"candidates": [
+  {
+    "methods": ["convert", "convert", "convert"]
+  }
+]}

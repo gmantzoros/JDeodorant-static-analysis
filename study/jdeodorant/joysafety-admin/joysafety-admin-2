@@ -1,0 +1,10 @@
+{
+"source_type_name": "DefenseConfigApiController",
+"candidates": [
+  {
+    "methods": ["confs", "func2Biz", "biz2Func", "confYaml"]
+  },
+  {
+    "methods": ["dagYaml", "dagUpdateYaml"]
+  }
+]}

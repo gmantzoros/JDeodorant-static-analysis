@@ -1,0 +1,5 @@
+{
+  "RequestDuplicationHandler": ["setPaths", "setMethods", "setBasePaths", "duplicateRequests"],
+  "BodyParameterHandler": ["putBodyParameter", "putBodyParameters", "setRequestBody"],
+  "HeaderAndEncodingHandler": ["putHeader", "setEncType"]
+}

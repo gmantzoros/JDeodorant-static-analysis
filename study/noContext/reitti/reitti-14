@@ -1,0 +1,20 @@
+{
+  "ImmichIntegrationHandler": [
+    "getPhotosContent",
+    "saveImmichIntegration",
+    "testImmichConnection"
+  ],
+  "OwnTracksRecorderIntegrationHandler": [
+    "saveOwnTracksRecorderIntegration",
+    "testOwnTracksRecorderConnection",
+    "deleteOwnTracksRecorderIntegration",
+    "loadOwnTracksRecorderHistoricalData"
+  ],
+  "ServerUrlBuilder": [
+    "calculateServerUrl"
+  ],
+  "DataQualityAnalyzer": [
+    "getDataQualityContent",
+    "generateDataQualityReport"
+  ]
+}

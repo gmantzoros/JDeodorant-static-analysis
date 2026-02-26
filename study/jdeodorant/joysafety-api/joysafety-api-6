@@ -1,0 +1,7 @@
+{
+"source_type_name": "RedisStorageService",
+"candidates": [
+  {
+    "methods": ["init"]
+  }
+]}

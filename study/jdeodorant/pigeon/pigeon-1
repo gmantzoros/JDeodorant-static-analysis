@@ -1,0 +1,25 @@
+{
+"source_type_name": "DownloadHandler",
+"candidates": [
+  {
+    "methods": ["prepareOutputDirectory", "getProcess", "addCommonOptions", "addSubtitleOptions", "addDownloadSpecificOptions", "addVideoOptions", "addAudioOptions", "normalizeAudioQuality"]
+  },
+  {
+    "methods": ["addDownloadSpecificOptions", "addVideoOptions", "addAudioOptions", "normalizeAudioQuality"]
+  },
+  {
+    "methods": ["init", "getStorageRoot"]
+  },
+  {
+    "methods": ["init", "getStorageRoot", "updateEpisodeWithRetry", "download", "getSafeTitle", "sanitizeFileName", "resolveFeedContext", "cleanSubtitleFiles", "buildFeedContext", "safeFeedTitle", "incrementRetryNumber"]
+  },
+  {
+    "methods": ["prepareOutputDirectory", "getProcess", "addCommonOptions", "addSubtitleOptions"]
+  },
+  {
+    "methods": ["resolveFeedContext"]
+  },
+  {
+    "methods": ["updateEpisodeWithRetry", "download", "getSafeTitle", "sanitizeFileName", "resolveFeedContext", "cleanSubtitleFiles", "buildFeedContext", "safeFeedTitle", "incrementRetryNumber"]
+  }
+]}

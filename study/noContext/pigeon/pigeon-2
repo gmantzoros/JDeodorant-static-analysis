@@ -1,0 +1,17 @@
+{
+  "PlaylistPageFetcher": [
+    "fetchPlaylistPage",
+    "fetchVideoDetailsInBulk"
+  ],
+  "EpisodeBuildingLogic": [
+    "buildEpisodeIfMatches",
+    "buildEpisodeFromVideo",
+    "applyThumbnails",
+    "shouldSkipLiveContent",
+    "notMatchesKeywordFilter",
+    "notMatchesDurationFilter"
+  ],
+  "ChannelUploadsResolver": [
+    "getUploadsPlaylistId"
+  ]
+}

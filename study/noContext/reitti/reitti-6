@@ -1,0 +1,21 @@
+{
+  "ConfigurationValidationHandler": [
+    "validateConfiguration"
+  ],
+  "RecalculationWorkflowController": [
+    "startRecalculation",
+    "dismissRecalculation",
+    "clearTimeRange"
+  ],
+  "ConfigurationPreviewHandler": [
+    "previewConfiguration"
+  ],
+  "ConfigurationEditHandler": [
+    "editConfiguration",
+    "newConfiguration",
+    "saveConfiguration"
+  ],
+  "DeleteConfigurationHandler": [
+    "deleteConfiguration"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+"source_type_name": "ChannelService",
+"candidates": [
+  {
+    "methods": ["init", "getChannelRssFeedUrl", "channelDetail", "refreshChannelById"]
+  },
+  {
+    "methods": ["fetchChannel"]
+  }
+]}

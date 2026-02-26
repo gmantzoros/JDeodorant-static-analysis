@@ -1,0 +1,11 @@
+{
+  "ArrayTypeChecks": [
+    "isArrayOfPrimitivesTestWithObjectNode",
+    "isArrayOfArraysTestWithObjectNode",
+    "isArrayOfObjectsTestWithObjectNode"
+  ],
+  "EncodeArrayPrimitives": [
+    "encodeArrayWithAllPrimitives",
+    "encodeArrayWithAllPrimitivesArrayOfArrays"
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "FeedCoverManager": ["saveFeedCover", "deleteFeedCover", "getFeedCover"],
+  "EpisodeMediaAccessor": ["getAudioFile", "getSubtitleFile", "getAvailableSubtitles"],
+  "FileAccessSecurity": ["isFileInAllowedDirectory", "isFileInAllowedDirectory"]
+}

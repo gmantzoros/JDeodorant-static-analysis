@@ -1,0 +1,4 @@
+{
+  "ProcessingTriggerScheduler": ["scheduleProcessingTrigger", "isIdle"],
+  "BatchIngestionHandler": ["processBatch", "scheduleProcessingTrigger"]
+}

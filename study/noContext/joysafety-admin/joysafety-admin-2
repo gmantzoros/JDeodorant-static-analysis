@@ -1,0 +1,5 @@
+{
+  "ConfigOperations": ["confs", "confYaml"],
+  "BizFuncMapping": ["func2Biz", "biz2Func"],
+  "DagYamlOperations": ["dagYaml", "dagUpdateYaml"]
+}

@@ -1,0 +1,7 @@
+{
+"source_type_name": "ManageDataController",
+"candidates": [
+  {
+    "methods": ["clearProcessedDataExceptPlaces", "removeAllDataExceptPlaces"]
+  }
+]}

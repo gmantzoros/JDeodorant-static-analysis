@@ -1,0 +1,5 @@
+{
+  "OpenAIConfigCandidate": ["initOpenaiConf", "streamBusiness", "openaiRequestBizs"],
+  "TradeSecurityConfigCandidate": ["tradeSecConf", "ignore"],
+  "HistoryIgnoreCandidate": ["historyIgnore"]
+}

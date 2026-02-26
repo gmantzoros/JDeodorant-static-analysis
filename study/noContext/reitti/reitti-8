@@ -1,0 +1,6 @@
+{
+  "SpeedConversion": ["mphToKmh", "kmhToMph"],
+  "ModeAvailabilityComputation": ["getAvailableModesToAdd"],
+  "TransportModeModification": ["addTransportMode", "updateTransportMode"],
+  "TripReclassification": ["reclassifyTrips"]
+}

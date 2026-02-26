@@ -1,0 +1,19 @@
+{
+  "Candidate1": [
+    "setUp",
+    "createTestUser"
+  ],
+  "Candidate2": [
+    "save_WhenCreatingNewUserSettings_ShouldInsertAndReturnWithId",
+    "save_WhenUpdatingExistingUserSettings_ShouldUpdateAndIncrementVersion"
+  ],
+  "Candidate3": [
+    "getOrCreateDefaultSettings_WhenUserSettingsDoNotExist_ShouldCreateDefault",
+    "getOrCreateDefaultSettings_WhenUserSettingsExist_ShouldReturnExisting",
+    "defaultSettings_ShouldHaveCorrectValues"
+  ],
+  "Candidate4": [
+    "shouldUpdateNewestValue",
+    "createLocationPoint"
+  ]
+}

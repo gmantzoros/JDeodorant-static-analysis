@@ -1,0 +1,23 @@
+{
+  "CandidateUserFactory": [
+    "randomUsername",
+    "createTestUser"
+  ],
+  "CandidateAdminWorkflowTests": [
+    "getUsersContent_AsAdmin_ShouldReturnUsersList",
+    "createUser_AsAdmin_ShouldCreateNewUser",
+    "createUser_WithInvalidData_ShouldShowError",
+    "updateUser_AsAdmin_ShouldUpdateExistingUser",
+    "deleteUser_AsAdmin_ShouldDeleteUser"
+  ],
+  "CandidateRegularUserAccessControlTests": [
+    "createUser_AsRegularUser_ShouldShowAccessDenied",
+    "deleteUser_AsRegularUser_ShouldShowAccessDenied",
+    "getUserForm_AsRegularUser_WithoutUserId_ShouldShowAccessDenied"
+  ],
+  "CandidateUserFormAdminTests": [
+    "getUserForm_AsAdmin_WithoutUserId_ShouldReturnEmptyForm",
+    "getUserForm_AsAdmin_WithUserId_ShouldReturnPopulatedForm",
+    "getUserForm_AsAdmin_WithoutUserId_ShouldIncludeAvailableUsers"
+  ]
+}

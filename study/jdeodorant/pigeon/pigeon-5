@@ -1,0 +1,10 @@
+{
+"source_type_name": "AbstractFeedService",
+"candidates": [
+  {
+    "methods": ["saveFeed", "normalizeInitialEpisodes", "resolveDownloadLimit", "selectEpisodesForAutoDownload"]
+  },
+  {
+    "methods": ["saveFeed", "normalizeInitialEpisodes", "resolveDownloadLimit", "selectEpisodesForAutoDownload", "persistEpisodesAndPublish", "prepareEpisodesForPersistence", "afterEpisodesPersisted", "filterNewEpisodes"]
+  }
+]}

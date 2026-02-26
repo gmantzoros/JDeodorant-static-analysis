@@ -1,0 +1,7 @@
+{
+"source_type_name": "UserSettingsControllerTest",
+"candidates": [
+  {
+    "methods": ["randomUsername", "createTestUser", "getUsersContent_AsRegularUser_ShouldReturnUserForm", "getUserForm_AsRegularUser_WithoutUserId_ShouldShowAccessDenied", "getUsersContent_AsAdmin_ShouldReturnUsersList", "createUser_WithInvalidData_ShouldShowError", "getUserForm_AsAdmin_WithoutUserId_ShouldReturnEmptyForm", "getUserForm_AsAdmin_WithUserId_ShouldReturnPopulatedForm", "getUserForm_AsAdmin_WithoutUserId_ShouldIncludeAvailableUsers", "createUser_AsAdmin_ShouldCreateNewUser", "updateUser_AsAdmin_ShouldUpdateExistingUser", "deleteUser_AsAdmin_ShouldDeleteUser", "deleteUser_AsRegularUser_ShouldShowAccessDenied", "deleteUser_SelfDeletion_ShouldShowError", "updateUser_CurrentUser_ShouldSetReloginFlag", "createUser_AsRegularUser_ShouldShowAccessDenied"]
+  }
+]}

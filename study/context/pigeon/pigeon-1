@@ -1,0 +1,28 @@
+{
+  "ProcessBuilderConfigurator": [
+    "getProcess",
+    "prepareOutputDirectory",
+    "addDownloadSpecificOptions",
+    "addVideoOptions",
+    "addAudioOptions",
+    "addCommonOptions",
+    "addSubtitleOptions",
+    "normalizeAudioQuality"
+  ],
+  "FeedContextResolver": [
+    "resolveFeedContext",
+    "buildFeedContext",
+    "safeFeedTitle"
+  ],
+  "FileNameSanitizer": [
+    "sanitizeFileName",
+    "getSafeTitle"
+  ],
+  "EpisodeUpdateRetryHandler": [
+    "updateEpisodeWithRetry",
+    "incrementRetryNumber"
+  ],
+  "SubtitleCleaner": [
+    "cleanSubtitleFiles"
+  ]
+}

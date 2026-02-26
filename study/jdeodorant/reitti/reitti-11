@@ -1,0 +1,7 @@
+{
+"source_type_name": "UserSettingsController",
+"candidates": [
+  {
+    "methods": ["handleDefaultAvatarSelection", "handleAvatarUpload", "handleCssUpload", "getUserContent", "getUserForm", "createUser", "updateUser", "deleteUser"]
+  }
+]}

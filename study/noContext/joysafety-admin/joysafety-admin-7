@@ -1,0 +1,16 @@
+{
+  "StringTrimmingCandidate": [
+    "setKey",
+    "setDesc",
+    "setStatus",
+    "setReleaseErp",
+    "setReleaseName",
+    "setValue"
+  ],
+  "TemporalFieldsCandidate": [
+    "getCreateTime",
+    "setCreateTime",
+    "getUpdateTime",
+    "setUpdateTime"
+  ]
+}

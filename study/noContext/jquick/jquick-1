@@ -1,0 +1,20 @@
+{
+  "ScopeManagement": [
+    "enterScope",
+    "currentContext",
+    "exitScope",
+    "updateVariableInStack"
+  ],
+  "LiteralAndValueConversion": [
+    "extract",
+    "convert",
+    "toBoolean"
+  ],
+  "TypeReferenceConversion": [
+    "mergeDataWithTypeReference",
+    "isMapTypeReference",
+    "convertWithGson",
+    "convertJacksonTypeToGsonType",
+    "convertJacksonTypeToGsonType"
+  ]
+}

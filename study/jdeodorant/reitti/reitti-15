@@ -1,0 +1,13 @@
+{
+"source_type_name": "ImmichIntegrationService",
+"candidates": [
+  {
+    "methods": ["convertToPhotoResponses", "testConnection", "searchPhotosForRange", "proxyImageRequest", "downloadImage", "getExtensionFromContentType"]
+  },
+  {
+    "methods": ["convertToPhotoResponses", "testConnection", "searchPhotosForRange", "proxyImageRequest"]
+  },
+  {
+    "methods": ["downloadImage", "getExtensionFromContentType"]
+  }
+]}

@@ -1,0 +1,20 @@
+{
+  "IndentationHandler": [
+    "getDepth",
+    "computeLeadingSpaces",
+    "findNextNonBlankLineDepth"
+  ],
+  "BlankLineNavigator": [
+    "isBlankLine",
+    "findNextNonBlankLine",
+    "findNextNonBlankLineDepth"
+  ],
+  "ConflictValidator": [
+    "validateNoMultiplePrimitivesAtRoot",
+    "checkFinalValueConflict",
+    "checkPathExpansionConflict"
+  ],
+  "ColonScanner": [
+    "findUnquotedColon"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "ClusterBlockOperations": [
+    "updateClusterBlock",
+    "createClusterBlock",
+    "editBlockForm"
+  ],
+  "TextBlockOperations": [
+    "createTextBlock",
+    "updateTextBlock",
+    "editBlockForm"
+  ],
+  "ImageGalleryOperations": [
+    "createImageGalleryBlock",
+    "updateImageGalleryBlock",
+    "uploadImage",
+    "fetchImmichPhoto",
+    "getImmichPhotos",
+    "editBlockForm"
+  ],
+  "AuthorizationChecks": [
+    "isOwner",
+    "canEdit"
+  ]
+}

@@ -1,0 +1,4 @@
+{
+  "RequestMerging": ["merge", "doMerge", "getId"],
+  "HistoryConversion": ["convert", "merge"]
+}

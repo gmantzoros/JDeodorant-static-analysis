@@ -1,0 +1,13 @@
+{
+  "MiddleResultsHandler": [
+    "appendResult",
+    "resultsByType"
+  ],
+  "ExecutionTiming": [
+    "timeout",
+    "getExecuteStartTime",
+    "setExecuteStartTime",
+    "getExecuteEndTime",
+    "setExecuteEndTime"
+  ]
+}

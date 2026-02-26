@@ -1,0 +1,7 @@
+{
+"source_type_name": "EpisodeEventListener",
+"candidates": [
+  {
+    "methods": ["handleDownloadTask", "handleChannelTask", "handlePlaylistTask"]
+  }
+]}

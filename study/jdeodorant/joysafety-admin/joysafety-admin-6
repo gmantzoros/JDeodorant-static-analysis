@@ -1,0 +1,7 @@
+{
+"source_type_name": "FunctionConf",
+"candidates": [
+  {
+    "methods": ["setGroup", "setName"]
+  }
+]}

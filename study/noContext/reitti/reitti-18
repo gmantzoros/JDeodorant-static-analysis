@@ -1,0 +1,15 @@
+{
+  "Candidate_DefaultSettingsBehavior": [
+    "defaultSettings_ShouldHaveCorrectValues",
+    "getOrCreateDefaultSettings_WhenUserSettingsDoNotExist_ShouldCreateDefault",
+    "getOrCreateDefaultSettings_WhenUserSettingsExist_ShouldReturnExisting"
+  ],
+  "Candidate_SaveLifecycle": [
+    "save_WhenCreatingNewUserSettings_ShouldInsertAndReturnWithId",
+    "save_WhenUpdatingExistingUserSettings_ShouldUpdateAndIncrementVersion"
+  ],
+  "Candidate_LocationUpdateFlow": [
+    "shouldUpdateNewestValue",
+    "createLocationPoint"
+  ]
+}

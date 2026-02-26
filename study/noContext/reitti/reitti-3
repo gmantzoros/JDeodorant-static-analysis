@@ -1,0 +1,15 @@
+{
+  "ProcessedDataOperations": [
+    "clearProcessedDataExceptPlaces",
+    "markRawLocationPointsAsUnprocessed",
+    "removeAllDataExceptPlaces"
+  ],
+  "ProcessingWorkflowHandler": [
+    "processVisitsTrips",
+    "clearAndReprocess",
+    "removeAllData"
+  ],
+  "MessageResolution": [
+    "getMessage"
+  ]
+}

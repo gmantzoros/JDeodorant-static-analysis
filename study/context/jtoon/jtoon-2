@@ -1,0 +1,6 @@
+{
+  "Candidate1": ["invokeCompute", "testNoIndent", "testBlankLinesReturnZero"],
+  "Candidate2": ["invokeCompute", "testLeadingSpacesNonStrict", "testTabNonStrictStopsCounting"],
+  "Candidate3": ["invokeCompute", "testLeadingSpacesStrictValidMultiple", "testStrictIndentSize4Valid"],
+  "Candidate4": ["setup", "invokeCompute"]
+}

@@ -1,0 +1,6 @@
+{
+  "QuestionBlock": ["getQuestion", "setQuestion"],
+  "AnswerBlock": ["getAnswer", "setAnswer"],
+  "MetadataBlock": ["getMetadata", "setMetadata"],
+  "DescBlock": ["getDesc", "setDesc"]
+}

@@ -1,0 +1,15 @@
+{
+  "EntryConstructionCluster": [
+    "buildEntries",
+    "addSubtitleElements",
+    "convertToRomeDuration",
+    "getSuffix"
+  ],
+  "FeedAssemblyCluster": [
+    "generateRssFeed",
+    "generatePlaylistRssFeed",
+    "createFeed",
+    "writeFeed",
+    "getCoverUrl"
+  ]
+}

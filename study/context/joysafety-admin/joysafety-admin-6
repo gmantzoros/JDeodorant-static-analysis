@@ -1,0 +1,26 @@
+{
+  "CandidateEditorInfo": [
+    "getEditorErp",
+    "setEditorErp",
+    "getEditorName",
+    "setEditorName"
+  ],
+  "CandidateAuditorInfo": [
+    "getAuditorErp",
+    "setAuditorErp",
+    "getAuditorName",
+    "setAuditorName"
+  ],
+  "CandidateReleaseInfo": [
+    "getReleaseErp",
+    "setReleaseErp",
+    "getReleaseName",
+    "setReleaseName"
+  ],
+  "CandidateTimestamps": [
+    "getCreateTime",
+    "setCreateTime",
+    "getUpdateTime",
+    "setUpdateTime"
+  ]
+}

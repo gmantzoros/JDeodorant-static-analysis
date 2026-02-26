@@ -1,0 +1,10 @@
+{
+"source_type_name": "TestingService",
+"candidates": [
+  {
+    "methods": ["importData", "importAndProcess", "triggerProcessingPipeline", "awaitDataImport", "clearData"]
+  },
+  {
+    "methods": ["importData", "importAndProcess"]
+  }
+]}

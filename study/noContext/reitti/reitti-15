@@ -1,0 +1,5 @@
+{
+  "ConnectionTester": ["testConnection"],
+  "PhotoSearchProcessor": ["searchPhotosForRange", "convertToPhotoResponses"],
+  "ImageProxyHandler": ["proxyImageRequest", "downloadImage", "getExtensionFromContentType"]
+}

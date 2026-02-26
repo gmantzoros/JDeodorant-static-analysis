@@ -1,0 +1,27 @@
+{
+  "PlayRouteProcessing": [
+    "processPlayRoutes",
+    "processPathParameters",
+    "processControllerParameters",
+    "splitParameters",
+    "getDefaultValueForType",
+    "normalizePlayRoutePath"
+  ],
+  "XmlDispatching": [
+    "processXml",
+    "processWebXml",
+    "processStrutsConfigXml",
+    "processStrutsXml",
+    "processJettyXml",
+    "processSpringBeansXml"
+  ],
+  "SpringHandlerMappingProcessing": [
+    "processSpringBeansXml",
+    "parseSimpleUrlHandlerMappings",
+    "parseBeanNameUrlHandlerMappings"
+  ],
+  "WebXmlHelpers": [
+    "processWebXml",
+    "getElementText"
+  ]
+}

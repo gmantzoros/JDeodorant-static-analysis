@@ -1,0 +1,22 @@
+{
+  "CacheHandlerCandidate": [
+    "shouldCache",
+    "loadCache",
+    "updateCache"
+  ],
+  "ContextBuilderCandidate": [
+    "buildContext",
+    "buildHistories",
+    "convert",
+    "reduceByCheckNum"
+  ],
+  "ExecutionChainCandidate": [
+    "doExecute",
+    "root",
+    "buildOriginCheck"
+  ],
+  "HistoryPersistenceCandidate": [
+    "saveToHistory",
+    "buildHistories"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "UserCreationHelpers": [
+    "randomUsername",
+    "createTestUser"
+  ],
+  "MockMvcInitialization": [
+    "setUp"
+  ]
+}

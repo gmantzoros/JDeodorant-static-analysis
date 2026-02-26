@@ -1,0 +1,7 @@
+{
+"source_type_name": "MultiHTTPRequest",
+"candidates": [
+  {
+    "methods": ["addPathParameter", "getPathParameters", "putQueryParameter", "setPath", "duplicateRequests", "addAdditionalInformation", "putCookieParameter", "putHeader", "setEncType"]
+  }
+]}

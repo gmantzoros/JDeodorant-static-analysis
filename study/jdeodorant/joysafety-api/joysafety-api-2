@@ -1,0 +1,7 @@
+{
+"source_type_name": "MultiTurnDetectFunction",
+"candidates": [
+  {
+    "methods": ["convert", "merge", "doMerge", "getId"]
+  }
+]}

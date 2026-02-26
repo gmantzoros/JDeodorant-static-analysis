@@ -1,0 +1,13 @@
+{
+"source_type_name": "TimelineController",
+"candidates": [
+  {
+    "methods": ["getPlaceEditForm", "getPlaceView", "updatePlace", "getTimelineContent", "getTimelineContentRange", "handleSharedUserData", "handleSharedUserDataRange"]
+  },
+  {
+    "methods": ["getTripEditForm", "getTripView"]
+  },
+  {
+    "methods": ["updateTripTransportMode", "getTripEditForm", "getTripView"]
+  }
+]}

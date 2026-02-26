@@ -1,0 +1,10 @@
+{
+"source_type_name": "RssService",
+"candidates": [
+  {
+    "methods": ["init", "getCoverUrl"]
+  },
+  {
+    "methods": ["addSubtitleElements", "init", "getCoverUrl", "buildEntries"]
+  }
+]}

@@ -1,0 +1,18 @@
+{
+  "EpisodePersistenceHandler": [
+    "persistEpisodesAndPublish",
+    "prepareEpisodesForPersistence",
+    "afterEpisodesPersisted",
+    "filterNewEpisodes",
+    "resolveDownloadLimit",
+    "selectEpisodesForAutoDownload"
+  ],
+  "FeedConfigMutator": [
+    "updateFeedConfig",
+    "applyMutableFields"
+  ],
+  "AsyncDownloadTaskDispatcher": [
+    "saveFeedAsync",
+    "publishDownloadTask"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "BlockRetrievalHandler": [
+    "getBlockPartsForMemory",
+    "getBlock",
+    "loadAndConvertBlockInstance"
+  ],
+  "ClusterBlockRetrievalHandler": [
+    "getClusterTripBlock",
+    "getClusterVisitBlock",
+    "adjustTime"
+  ],
+  "BlockOrderingManager": [
+    "addBlock",
+    "reorderBlocks"
+  ],
+  "ClusterBlockCreationManager": [
+    "createClusterBlock",
+    "recalculateMemory"
+  ],
+  "ImageGalleryManager": [
+    "addImageGalleryBlock",
+    "deleteImageFromGallery",
+    "getImagesForBlock",
+    "updateImageBlock"
+  ],
+  "TextBlockManager": [
+    "addTextBlock",
+    "updateTextBlock",
+    "getTextBlock"
+  ]
+}

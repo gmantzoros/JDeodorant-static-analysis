@@ -1,0 +1,15 @@
+{
+  "AvatarHandling": [
+    "handleAvatarUpload",
+    "handleDefaultAvatarSelection",
+    "isAllowedContentType"
+  ],
+  "CssHandling": [
+    "handleCssUpload"
+  ],
+  "UserContentRendering": [
+    "getUsersContent",
+    "getUserContent",
+    "getUserForm"
+  ]
+}

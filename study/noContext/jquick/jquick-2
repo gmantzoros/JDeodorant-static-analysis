@@ -1,0 +1,4 @@
+{
+"VariableManagement": ["addVariable", "getVariable", "updateVariableWithAllScopes"],
+"ScopeVariableManagement": ["addScopeVariable"]
+}

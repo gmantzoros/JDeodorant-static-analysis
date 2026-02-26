@@ -1,0 +1,5 @@
+{
+  "ImportExecution": ["importData", "importAndProcess"],
+  "ProcessingMonitoring": ["awaitDataImport", "triggerProcessingPipeline"],
+  "DataReset": ["clearData", "awaitDataImport"]
+}

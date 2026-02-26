@@ -1,0 +1,38 @@
+{
+  "EditorInfoCandidate": [
+    "getEditorErp",
+    "setEditorErp",
+    "getEditorName",
+    "setEditorName"
+  ],
+  "AuditorInfoCandidate": [
+    "getAuditorErp",
+    "setAuditorErp",
+    "getAuditorName",
+    "setAuditorName"
+  ],
+  "ReleaseInfoCandidate": [
+    "getReleaseErp",
+    "setReleaseErp",
+    "getReleaseName",
+    "setReleaseName"
+  ],
+  "LifecycleTimestampsCandidate": [
+    "getCreateTime",
+    "setCreateTime",
+    "getUpdateTime",
+    "setUpdateTime"
+  ],
+  "StructuralIdentityCandidate": [
+    "getId",
+    "setId",
+    "getRootId",
+    "setRootId",
+    "getVersion",
+    "setVersion"
+  ],
+  "ConfPayloadCandidate": [
+    "getConf",
+    "setConf"
+  ]
+}

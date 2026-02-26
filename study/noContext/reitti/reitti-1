@@ -1,0 +1,13 @@
+{
+  "AvatarDownloadHandler": [
+    "downloadAndSaveAvatar",
+    "determineContentType"
+  ],
+  "DefaultOidcUserProvider": [
+    "loadUser",
+    "getDefaultUser"
+  ],
+  "DisplayNameResolver": [
+    "getDisplayName"
+  ]
+}

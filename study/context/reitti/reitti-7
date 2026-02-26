@@ -1,0 +1,20 @@
+{
+  "TimelineContentBuilder": [
+    "getTimelineContent",
+    "getTimelineContentRange"
+  ],
+  "SharedUserTimelineAssembler": [
+    "handleSharedUserData",
+    "handleSharedUserDataRange"
+  ],
+  "PlaceEditingHandler": [
+    "getPlaceEditForm",
+    "updatePlace",
+    "getPlaceView"
+  ],
+  "TripEditingHandler": [
+    "getTripEditForm",
+    "updateTripTransportMode",
+    "getTripView"
+  ]
+}

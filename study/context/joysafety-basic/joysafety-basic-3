@@ -1,0 +1,4 @@
+{
+  "MessageRoleChecker": ["fromRobot", "fromUser", "getMessageInfo", "setMessageInfo"],
+  "RequestSigning": ["sign", "setSignature", "setPlainText", "setAccessKey", "getAccessKey", "getPlainText", "getContent"]
+}

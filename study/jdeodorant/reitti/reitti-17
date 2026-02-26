@@ -1,0 +1,7 @@
+{
+"source_type_name": "LocationDataDensityNormalizerTest",
+"candidates": [
+  {
+    "methods": ["shouldGenerateSyntheticPointsForLargeGaps", "shouldMarkExcessPointsAsIgnored", "shouldRespectMaxInterpolationDistance", "shouldRespectMaxInterpolationTimeGap", "shouldHandleEmptyDataGracefully", "shouldHandleSinglePointGracefully", "createAndSaveRawPoint"]
+  }
+]}

@@ -1,0 +1,15 @@
+{
+  "FeedCreationCandidate": [
+    "createFeed",
+    "writeFeed"
+  ],
+  "EntryBuildingCandidate": [
+    "buildEntries",
+    "addSubtitleElements",
+    "convertToRomeDuration",
+    "getSuffix"
+  ],
+  "CoverUrlResolutionCandidate": [
+    "getCoverUrl"
+  ]
+}

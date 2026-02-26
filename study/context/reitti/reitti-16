@@ -1,0 +1,10 @@
+{
+  "TimelineFormattingHelper": [
+    "formatTimeRange",
+    "formatDuration",
+    "formatDistance"
+  ],
+  "TimelineEntryBuilder": [
+    "buildTimelineEntries"
+  ]
+}

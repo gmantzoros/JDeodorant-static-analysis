@@ -1,0 +1,18 @@
+{
+  "LastUserRequestBuilder": [
+    "buildLastUserReq",
+    "buildLastUserReqFromOpenai"
+  ],
+  "SliceRetrievalCore": [
+    "latestSliceWithoutCache",
+    "latestMessageWithoutCache"
+  ],
+  "HistoryWriter": [
+    "addHistory",
+    "doAddHistory"
+  ],
+  "HistoryV2Operations": [
+    "addHistoryV2",
+    "latestHistoryV2"
+  ]
+}

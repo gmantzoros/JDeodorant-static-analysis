@@ -1,0 +1,4 @@
+{
+  "CandidateReduceLogic": ["run", "getReduceEngine", "setReduceEngine"],
+  "CandidateRouting": ["next", "getRouter", "setRouter"]
+}

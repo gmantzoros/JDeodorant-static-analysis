@@ -1,0 +1,26 @@
+{
+  "ChannelDeletionHandler": [
+    "deleteChannel",
+    "deleteEpisodeRecords",
+    "deleteAudioFiles"
+  ],
+  "ChannelInitializationProcessor": [
+    "processChannelInitializationAsync",
+    "fetchChannelHistory"
+  ],
+  "ChannelEpisodeFetching": [
+    "fetchEpisodes",
+    "fetchIncrementalEpisodes"
+  ],
+  "ChannelSynchronization": [
+    "refreshChannelById",
+    "refreshChannel",
+    "findDueForSync"
+  ],
+  "ChannelLookup": [
+    "selectChannelList",
+    "channelDetail",
+    "findChannelByIdentification",
+    "getChannelRssFeedUrl"
+  ]
+}

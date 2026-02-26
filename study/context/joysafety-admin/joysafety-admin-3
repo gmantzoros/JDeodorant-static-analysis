@@ -1,0 +1,25 @@
+{
+  "Candidate_ValidationEngine": [
+    "fullCheck",
+    "checkConfArray",
+    "checkConf",
+    "checkRouter",
+    "checkSimpleNext",
+    "checkGroovy",
+    "checkFunction"
+  ],
+  "Candidate_ConversionUtils": [
+    "unConvert"
+  ],
+  "Candidate_Versioning": [
+    "newVersion",
+    "allVersion",
+    "newDagVersion"
+  ],
+  "Candidate_StatusTransition": [
+    "dagOnline",
+    "dagOffline",
+    "offlineAndOnline",
+    "upgrade"
+  ]
+}

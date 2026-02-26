@@ -1,0 +1,13 @@
+{
+"source_type_name": "MediaService",
+"candidates": [
+  {
+    "methods": ["isFileInAllowedDirectory", "saveFeedCover", "deleteFeedCover", "getFeedCover", "isFileInAllowedDirectory"]
+  },
+  {
+    "methods": ["saveFeedCover", "deleteFeedCover", "getFeedCover"]
+  },
+  {
+    "methods": ["getAudioFile", "getSubtitleFile"]
+  }
+]}

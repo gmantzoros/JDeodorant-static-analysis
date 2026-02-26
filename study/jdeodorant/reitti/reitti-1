@@ -1,0 +1,7 @@
+{
+"source_type_name": "CustomOidcUserService",
+"candidates": [
+  {
+    "methods": ["downloadAndSaveAvatar", "determineContentType"]
+  }
+]}

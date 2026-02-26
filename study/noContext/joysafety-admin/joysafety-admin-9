@@ -1,0 +1,20 @@
+{
+  "TextTrimmingFields": [
+    "setQuestion",
+    "setAnswer",
+    "setMetadata",
+    "setDesc"
+  ],
+  "FieldAccessors_QuestionAnswer": [
+    "getQuestion",
+    "setQuestion",
+    "getAnswer",
+    "setAnswer"
+  ],
+  "FieldAccessors_MetadataDesc": [
+    "getMetadata",
+    "setMetadata",
+    "getDesc",
+    "setDesc"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+"source_type_name": "ArrayEncoderTest",
+"candidates": [
+  {
+    "methods": ["isArrayOfPrimitivesTestWithObjectNode", "isArrayOfArraysTestWithObjectNode", "isArrayOfObjectsTestWithObjectNode"]
+  },
+  {
+    "methods": ["givenArrayOfArraysWithMixedInnerTypes_whenEncodePrivate_thenWritesExpected", "encodeArrayWithAllPrimitives", "encodeArrayWithAllPrimitivesArrayOfArrays"]
+  }
+]}

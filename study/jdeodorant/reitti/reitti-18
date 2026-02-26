@@ -1,0 +1,10 @@
+{
+"source_type_name": "UserSettingsJdbcServiceTest",
+"candidates": [
+  {
+    "methods": ["findByUserId_WhenUserSettingsDoNotExist_ShouldReturnEmpty", "save_WhenCreatingNewUserSettings_ShouldInsertAndReturnWithId", "save_WhenUpdatingExistingUserSettings_ShouldUpdateAndIncrementVersion", "findByUserId_WhenUserSettingsExist_ShouldReturnSettings", "defaultSettings_ShouldHaveCorrectValues", "getOrCreateDefaultSettings_WhenUserSettingsDoNotExist_ShouldCreateDefault", "getOrCreateDefaultSettings_WhenUserSettingsExist_ShouldReturnExisting", "shouldUpdateNewestValue"]
+  },
+  {
+    "methods": ["createTestUser", "setUp"]
+  }
+]}

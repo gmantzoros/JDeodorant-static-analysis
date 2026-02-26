@@ -1,0 +1,5 @@
+{
+  "CandidateListOps": ["lpush", "rpop", "rpopN", "lrange", "llen"],
+  "CandidateLockOps": ["lock", "unlock"],
+  "CandidateExecutionCore": ["execute", "init"]
+}

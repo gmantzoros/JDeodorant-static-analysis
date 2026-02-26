@@ -1,0 +1,13 @@
+{
+"source_type_name": "IntegrationsSettingsController",
+"candidates": [
+  {
+    "methods": ["testOwnTracksRecorderConnection", "getPage", "getIntegrationsContent", "loadOwnTracksRecorderHistoricalData", "deleteOwnTracksRecorderIntegration", "saveOwnTracksRecorderIntegration", "getMessage", "getPhotosContent", "saveImmichIntegration", "testImmichConnection"]
+  },
+  {
+    "methods": ["getDataQualityContent", "generateDataQualityReport"]
+  },
+  {
+    "methods": ["testOwnTracksRecorderConnection", "getPage", "getIntegrationsContent", "loadOwnTracksRecorderHistoricalData", "deleteOwnTracksRecorderIntegration", "saveOwnTracksRecorderIntegration", "getMessage"]
+  }
+]}

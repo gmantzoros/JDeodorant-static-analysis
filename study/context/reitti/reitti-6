@@ -1,0 +1,22 @@
+{
+  "ConfigurationEditingHandler": [
+    "editConfiguration",
+    "newConfiguration",
+    "saveConfiguration",
+    "validateConfiguration"
+  ],
+  "RecalculationOperations": [
+    "startRecalculation",
+    "dismissRecalculation",
+    "clearTimeRange",
+    "calculateNeedsConfiguration"
+  ],
+  "ConfigurationLifecycleManager": [
+    "deleteConfiguration",
+    "saveConfiguration",
+    "validateConfiguration"
+  ],
+  "PreviewExecution": [
+    "previewConfiguration"
+  ]
+}

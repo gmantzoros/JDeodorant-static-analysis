@@ -1,0 +1,5 @@
+{
+  "ApiTokenPersistenceCandidate": ["save", "insert", "update"],
+  "ApiTokenDeletionCandidate": ["delete", "deleteById", "deleteForUser"],
+  "ApiTokenUsageTrackingCandidate": ["trackUsage", "getUsages", "mapRowToApiUsage"]
+}

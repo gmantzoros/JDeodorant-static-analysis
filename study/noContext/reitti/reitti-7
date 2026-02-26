@@ -1,0 +1,18 @@
+{
+  "TimelineContentBuilder": [
+    "getTimelineContent",
+    "getTimelineContentRange",
+    "handleSharedUserData",
+    "handleSharedUserDataRange"
+  ],
+  "PlaceEditHandler": [
+    "getPlaceEditForm",
+    "updatePlace",
+    "getPlaceView"
+  ],
+  "TripEditHandler": [
+    "getTripEditForm",
+    "updateTripTransportMode",
+    "getTripView"
+  ]
+}

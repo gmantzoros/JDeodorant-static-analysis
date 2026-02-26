@@ -1,0 +1,20 @@
+{
+  "ApiTokenMapping": [
+    "mapRowToApiToken",
+    "mapRowToApiUsage"
+  ],
+  "ApiTokenPersistence": [
+    "insert",
+    "update",
+    "save"
+  ],
+  "ApiTokenUsageTracking": [
+    "getUsages",
+    "trackUsage"
+  ],
+  "ApiTokenDeletion": [
+    "deleteById",
+    "delete",
+    "deleteForUser"
+  ]
+}

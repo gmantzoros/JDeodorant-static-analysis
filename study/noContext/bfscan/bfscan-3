@@ -1,0 +1,23 @@
+{
+  "XmlProcessingCandidate": [
+    "processXml",
+    "processWebXml",
+    "processStrutsConfigXml",
+    "processStrutsXml",
+    "processJettyXml",
+    "processSpringBeansXml",
+    "parseSimpleUrlHandlerMappings",
+    "parseBeanNameUrlHandlerMappings"
+  ],
+  "PlayRoutesProcessingCandidate": [
+    "processPlayRoutes",
+    "processPathParameters",
+    "processControllerParameters",
+    "splitParameters",
+    "getDefaultValueForType",
+    "normalizePlayRoutePath"
+  ],
+  "ZipAndFileExpansionCandidate": [
+    "processFile"
+  ]
+}

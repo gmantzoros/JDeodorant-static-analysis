@@ -1,0 +1,21 @@
+{
+  "ScopeManagementCandidate": [
+    "enterScope",
+    "currentContext",
+    "exitScope",
+    "updateVariableInStack"
+  ],
+  "LiteralProcessingCandidate": [
+    "extract",
+    "convert"
+  ],
+  "JacksonGsonTypeConversionCandidate": [
+    "convertWithGson",
+    "convertJacksonTypeToGsonType"
+  ],
+  "TypeMergingCandidate": [
+    "isMapTypeReference",
+    "mergeDataWithTypeReference",
+    "convertWithGson"
+  ]
+}

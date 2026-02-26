@@ -1,0 +1,16 @@
+{
+  "TransportModeConfigManagement": [
+    "addTransportMode",
+    "updateTransportMode",
+    "deleteTransportMode",
+    "mphToKmh"
+  ],
+  "TransportModeViewPreparation": [
+    "transportationModes",
+    "getTransportationModesContent",
+    "getAvailableModesToAdd"
+  ],
+  "TripReclassificationExecutor": [
+    "reclassifyTrips"
+  ]
+}

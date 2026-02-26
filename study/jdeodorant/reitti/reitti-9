@@ -1,0 +1,10 @@
+{
+"source_type_name": "UnifiedLocationProcessingService",
+"candidates": [
+  {
+    "methods": ["findOrCreateSignificantPlace", "findNearbyPlaces", "publishSignificantPlaceCreatedEvent", "findClosestPlace", "calculateDistanceBetweenPlaces", "createSignificantPlace", "createProcessedVisit"]
+  },
+  {
+    "methods": ["detectStayPointsFromTrajectory", "createStayPoint", "weightedCenter", "weightedCenterSimple", "weightedCenterOptimized"]
+  }
+]}

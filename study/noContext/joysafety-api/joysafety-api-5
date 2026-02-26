@@ -1,0 +1,14 @@
+{
+  "CandidateBuildLastUserReq": [
+    "buildLastUserReq",
+    "buildLastUserReqFromOpenai"
+  ],
+  "CandidateAddHistory": [
+    "addHistory",
+    "doAddHistory"
+  ],
+  "CandidateLatestSliceNoCache": [
+    "latestSliceWithoutCache",
+    "latestSliceWithoutCache"
+  ]
+}

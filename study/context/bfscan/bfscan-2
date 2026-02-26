@@ -1,0 +1,17 @@
+{
+  "SecretHeuristicsCandidate": [
+    "getSecretReason",
+    "calculateEntropy",
+    "isLikelyText",
+    "isBase64Like",
+    "isHexLike"
+  ],
+  "UrlPathExtractionCandidate": [
+    "extractUrlsAndPaths",
+    "fallbackParsing"
+  ],
+  "FileProcessingCandidate": [
+    "processFile",
+    "fallbackParsing"
+  ]
+}

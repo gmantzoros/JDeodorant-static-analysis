@@ -1,0 +1,7 @@
+{
+"source_type_name": "ConstantsProcessor",
+"candidates": [
+  {
+    "methods": ["calculateEntropy", "getSecretReason", "isLikelyText", "isBase64Like", "isHexLike"]
+  }
+]}

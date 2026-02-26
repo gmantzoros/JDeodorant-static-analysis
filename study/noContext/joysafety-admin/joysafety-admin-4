@@ -1,0 +1,5 @@
+{
+  "AccessTargetsConfig": ["getAccessTargets", "setAccessTargets"],
+  "RobotCheckConfig": ["getRobotCheckConf", "setRobotCheckConf"],
+  "UserCheckConfig": ["getUserCheckConf", "setUserCheckConf"]
+}

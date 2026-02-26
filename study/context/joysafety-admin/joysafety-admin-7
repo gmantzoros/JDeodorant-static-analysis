@@ -1,0 +1,16 @@
+{
+  "StringNormalizationCandidate": [
+    "setKey",
+    "setDesc",
+    "setStatus",
+    "setReleaseErp",
+    "setReleaseName",
+    "setValue"
+  ],
+  "TimestampMetadataCandidate": [
+    "getCreateTime",
+    "setCreateTime",
+    "getUpdateTime",
+    "setUpdateTime"
+  ]
+}

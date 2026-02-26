@@ -1,0 +1,5 @@
+{
+  "ChannelDownloadTaskHandler": ["handleDownloadTask", "handleChannelTask"],
+  "PlaylistDownloadTaskHandler": ["handleDownloadTask", "handlePlaylistTask"],
+  "EpisodeCreationDownloadScheduler": ["handleEpisodesCreated"]
+}

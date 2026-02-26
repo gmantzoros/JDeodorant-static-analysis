@@ -1,0 +1,28 @@
+{
+  "OpenApiOutputHandler": [
+    "writeHeader",
+    "writeRequest",
+    "writeOutput",
+    "addOpenApiTag"
+  ],
+  "ClassAndResourceProcessing": [
+    "processClasses",
+    "shouldProcessClass",
+    "processResources",
+    "processRequestsFromRes",
+    "processClass"
+  ],
+  "MethodAnnotationProcessor": [
+    "processMethod",
+    "processMethodAnnotations",
+    "processMethodParameters"
+  ],
+  "MethodArgumentProcessor": [
+    "processMethodArgs",
+    "processMethodArg",
+    "processAnnotatedArg",
+    "processUnannotatedArg",
+    "getLocalVars",
+    "getCodeVar"
+  ]
+}

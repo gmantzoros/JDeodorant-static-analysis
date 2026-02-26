@@ -1,0 +1,10 @@
+{
+"source_type_name": "RedLineKnowledge",
+"candidates": [
+  {
+    "methods": ["setClassName", "setSource"]
+  },
+  {
+    "methods": ["setUniqId", "setBusinessScene"]
+  }
+]}

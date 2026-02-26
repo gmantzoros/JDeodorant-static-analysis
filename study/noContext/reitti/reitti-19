@@ -1,0 +1,12 @@
+{
+  "RawLocationPathExtraction": [
+    "loadSegmentsInBoundingBoxAndTime",
+    "extractPathSegments",
+    "isPointInBox",
+    "toLocationPoint"
+  ],
+  "RawLocationDateRangeParsing": [
+    "getRawLocationPoints",
+    "getRawLocationPointsForCurrentUser"
+  ]
+}

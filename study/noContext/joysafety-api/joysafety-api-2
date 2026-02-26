@@ -1,0 +1,4 @@
+{
+  "MergeOps": ["convert", "merge", "doMerge", "getId"],
+  "InitOps": ["doInit"]
+}

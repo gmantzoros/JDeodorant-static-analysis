@@ -1,0 +1,12 @@
+{
+  "TimeFormattingHelper": [
+    "formatTimeRange",
+    "formatDuration"
+  ],
+  "DistanceFormattingHelper": [
+    "formatDistance"
+  ],
+  "TimelineEntryAssembler": [
+    "buildTimelineEntries(User, String, List<ProcessedVisit>, List<Trip>, ZoneId, LocalDate, UserSettings)"
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "Candidate1": ["createAndSaveRawPoint"],
+  "Candidate2": ["createLocationPoint"],
+  "Candidate3": ["createAndSaveRawPoint", "createLocationPoint"]
+}

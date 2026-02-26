@@ -1,0 +1,14 @@
+{
+  "LocationPointConversion": [
+    "toLocationPoint",
+    "getLatitude",
+    "getLongitude",
+    "getAltitude",
+    "getAccuracy",
+    "getTimestamp"
+  ],
+  "LocationTypeCheck": [
+    "isLocationUpdate",
+    "getType"
+  ]
+}

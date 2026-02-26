@@ -1,0 +1,23 @@
+{
+  "EpisodePersistenceCoordinator": [
+    "persistEpisodesAndPublish",
+    "prepareEpisodesForPersistence",
+    "afterEpisodesPersisted",
+    "selectEpisodesForAutoDownload",
+    "resolveDownloadLimit"
+  ],
+  "EpisodeFiltering": [
+    "filterNewEpisodes"
+  ],
+  "FeedConfigurationMutator": [
+    "updateFeedConfig",
+    "applyMutableFields"
+  ],
+  "InitialEpisodeNormalization": [
+    "saveFeed",
+    "normalizeInitialEpisodes"
+  ],
+  "DownloadTaskPublisher": [
+    "publishDownloadTask"
+  ]
+}

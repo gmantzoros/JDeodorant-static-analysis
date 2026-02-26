@@ -1,0 +1,5 @@
+{
+  "DefenseConfigYamlHandler": ["confYaml", "confs"],
+  "DagYamlHandler": ["dagYaml", "dagUpdateYaml"],
+  "DefenseConfigBizMapper": ["func2Biz", "biz2Func"]
+}

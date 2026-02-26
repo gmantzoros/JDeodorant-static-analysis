@@ -1,0 +1,24 @@
+{
+  "StayPointClustering": [
+    "detectStayPointsFromTrajectory",
+    "createStayPoint",
+    "weightedCenter",
+    "weightedCenterSimple",
+    "weightedCenterOptimized"
+  ],
+  "SignificantPlaceResolution": [
+    "findNearbyPlaces",
+    "findOrCreateSignificantPlace",
+    "createSignificantPlace",
+    "findClosestPlace",
+    "publishSignificantPlaceCreatedEvent"
+  ],
+  "TripConstruction": [
+    "createTripBetweenVisits",
+    "calculateDistanceBetweenPlaces"
+  ],
+  "VisitMergingCore": [
+    "mergeVisitsChronologically",
+    "createProcessedVisit"
+  ]
+}

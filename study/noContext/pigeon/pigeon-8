@@ -1,0 +1,25 @@
+{
+  "PlaylistDeletionHandler": [
+    "deletePlaylist",
+    "removeOrphanEpisodes",
+    "cleanupEmptyDirectories"
+  ],
+  "PlaylistEpisodeMappingManager": [
+    "upsertPlaylistEpisodes",
+    "afterEpisodesPersisted"
+  ],
+  "PlaylistRefreshEngine": [
+    "refreshPlaylist",
+    "refreshPlaylistById",
+    "fetchIncrementalEpisodes"
+  ],
+  "PlaylistHistoryFetcher": [
+    "fetchPlaylistHistory",
+    "upsertPlaylistEpisodes"
+  ],
+  "AsyncInitializationProcessor": [
+    "processPlaylistInitializationAsync",
+    "upsertPlaylistEpisodes",
+    "afterEpisodesPersisted"
+  ]
+}

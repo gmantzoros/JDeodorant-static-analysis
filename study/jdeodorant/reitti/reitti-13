@@ -1,0 +1,13 @@
+{
+"source_type_name": "MemoryService",
+"candidates": [
+  {
+    "methods": ["getOwnerId", "addBlock", "getBlockPartsForMemory", "getBlock", "reorderBlocks", "addTextBlock", "getImagesForBlock", "recalculateMemory", "loadAndConvertBlockInstance"]
+  },
+  {
+    "methods": ["getClusterTripBlock", "getClusterVisitBlock", "createClusterBlock", "adjustTime"]
+  },
+  {
+    "methods": ["getOwnerId", "addBlock", "getBlockPartsForMemory", "getBlock", "reorderBlocks"]
+  }
+]}

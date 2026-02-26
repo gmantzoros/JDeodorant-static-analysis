@@ -1,0 +1,10 @@
+{
+"source_type_name": "ExecuteDagConf",
+"candidates": [
+  {
+    "methods": ["setBusinessName", "setGroup"]
+  },
+  {
+    "methods": ["setDesc", "setRootId"]
+  }
+]}

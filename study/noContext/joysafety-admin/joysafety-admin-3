@@ -1,0 +1,25 @@
+{
+  "DagConfigValidation": [
+    "fullCheck",
+    "checkConfArray",
+    "checkConf",
+    "checkRouter",
+    "checkSimpleNext",
+    "checkGroovy",
+    "checkFunction"
+  ],
+  "DagVersioning": [
+    "newVersion",
+    "allVersion",
+    "newDagVersion"
+  ],
+  "DagStatusTransition": [
+    "dagOnline",
+    "dagOffline",
+    "offlineAndOnline",
+    "upgrade"
+  ],
+  "DagConversion": [
+    "unConvert"
+  ]
+}

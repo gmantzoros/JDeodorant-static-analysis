@@ -1,0 +1,10 @@
+{
+"source_type_name": "MemoryBlockController",
+"candidates": [
+  {
+    "methods": ["uploadImage", "fetchImmichPhoto", "deleteBlock", "reorderBlocks", "getImmichPhotos", "viewBlock", "createClusterBlock", "createTextBlock", "createImageGalleryBlock", "updateImageGalleryBlock", "updateTextBlock", "isOwner", "canEdit"]
+  },
+  {
+    "methods": ["uploadImage", "fetchImmichPhoto", "deleteBlock", "reorderBlocks", "getImmichPhotos", "viewBlock", "createClusterBlock", "createTextBlock", "createImageGalleryBlock", "updateImageGalleryBlock", "updateTextBlock"]
+  }
+]}

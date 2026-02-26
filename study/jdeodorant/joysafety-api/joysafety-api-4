@@ -1,0 +1,10 @@
+{
+"source_type_name": "FunctionExecutorImpl",
+"candidates": [
+  {
+    "methods": ["loadCache", "updateCache"]
+  },
+  {
+    "methods": ["buildContext"]
+  }
+]}

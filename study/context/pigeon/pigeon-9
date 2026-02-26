@@ -1,0 +1,17 @@
+{
+  "FileCleanupHandler": [
+    "deleteEpisodeById",
+    "deleteSubtitleFiles",
+    "cleanupCompletedEpisode"
+  ],
+  "EpisodeDownloadWorkflow": [
+    "retryEpisode",
+    "manualDownloadEpisode",
+    "cancelPendingEpisode"
+  ],
+  "EpisodeBatchProcessor": [
+    "batchProcessEpisodes",
+    "getTargetStatus",
+    "getEpisodeStatus"
+  ]
+}

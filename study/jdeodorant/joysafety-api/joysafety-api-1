@@ -1,0 +1,16 @@
+{
+"source_type_name": "GlobalConf",
+"candidates": [
+  {
+    "methods": ["initOpenaiConf"]
+  },
+  {
+    "methods": ["tradeSecConf", "ignore"]
+  },
+  {
+    "methods": ["init", "historyIgnore", "tradeSecConf", "ignore"]
+  },
+  {
+    "methods": ["init", "historyIgnore"]
+  }
+]}

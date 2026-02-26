@@ -1,0 +1,17 @@
+{
+  "DataClearingOperations": [
+    "clearProcessedDataExceptPlaces",
+    "markRawLocationPointsAsUnprocessed",
+    "removeAllDataExceptPlaces"
+  ],
+  "ProcessingTriggerOperations": [
+    "processVisitsTrips",
+    "clearAndReprocess"
+  ],
+  "MessageResolution": [
+    "getMessage",
+    "processVisitsTrips",
+    "clearAndReprocess",
+    "removeAllData"
+  ]
+}

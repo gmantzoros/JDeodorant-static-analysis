@@ -1,0 +1,26 @@
+{
+  "EditorInfo": [
+    "getEditorErp",
+    "setEditorErp",
+    "getEditorName",
+    "setEditorName"
+  ],
+  "AuditorInfo": [
+    "getAuditorErp",
+    "setAuditorErp",
+    "getAuditorName",
+    "setAuditorName"
+  ],
+  "ReleaseInfo": [
+    "getReleaseErp",
+    "setReleaseErp",
+    "getReleaseName",
+    "setReleaseName"
+  ],
+  "TemporalMetadata": [
+    "getCreateTime",
+    "setCreateTime",
+    "getUpdateTime",
+    "setUpdateTime"
+  ]
+}

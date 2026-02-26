@@ -1,0 +1,18 @@
+{
+  "TextBlockHandler": [
+    "addTextBlock",
+    "updateTextBlock",
+    "getTextBlock"
+  ],
+  "ImageGalleryHandler": [
+    "addImageGalleryBlock",
+    "updateImageBlock",
+    "deleteImageFromGallery",
+    "getImagesForBlock"
+  ],
+  "ClusterBlockLoader": [
+    "loadAndConvertBlockInstance",
+    "getClusterTripBlock",
+    "getClusterVisitBlock"
+  ]
+}

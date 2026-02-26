@@ -1,0 +1,7 @@
+{
+"source_type_name": "DefenseApiRequest",
+"candidates": [
+  {
+    "methods": ["fromRobot", "fromUser"]
+  }
+]}

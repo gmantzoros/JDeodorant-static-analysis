@@ -1,0 +1,17 @@
+{
+  "EpisodeFilteringAndBuilding": [
+    "buildEpisodeIfMatches",
+    "notMatchesKeywordFilter",
+    "notMatchesDurationFilter",
+    "shouldSkipLiveContent",
+    "buildEpisodeFromVideo"
+  ],
+  "YoutubeApiAccess": [
+    "fetchPlaylistPage",
+    "fetchVideoDetailsInBulk",
+    "getUploadsPlaylistId"
+  ],
+  "ThumbnailApplication": [
+    "applyThumbnails"
+  ]
+}

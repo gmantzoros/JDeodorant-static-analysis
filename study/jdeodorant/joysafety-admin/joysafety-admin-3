@@ -1,0 +1,13 @@
+{
+"source_type_name": "DagConfigServiceImpl",
+"candidates": [
+  {
+    "methods": ["checkFunction", "checkConf", "checkConfArray", "checkRouter", "checkSimpleNext", "checkGroovy"]
+  },
+  {
+    "methods": ["checkRouter", "checkSimpleNext", "checkGroovy"]
+  },
+  {
+    "methods": ["checkFunction", "checkConf", "checkConfArray"]
+  }
+]}

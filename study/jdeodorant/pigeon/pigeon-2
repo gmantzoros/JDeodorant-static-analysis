@@ -1,0 +1,10 @@
+{
+"source_type_name": "YoutubeVideoHelper",
+"candidates": [
+  {
+    "methods": ["buildEpisodeIfMatches", "buildEpisodeFromVideo", "notMatchesKeywordFilter", "notMatchesDurationFilter", "shouldSkipLiveContent"]
+  },
+  {
+    "methods": ["getUploadsPlaylistId", "fetchPlaylistPage", "fetchVideoDetailsInBulk"]
+  }
+]}

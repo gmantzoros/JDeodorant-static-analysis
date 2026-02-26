@@ -1,0 +1,17 @@
+{
+  "CandidateTimeoutLogic": [
+    "timeout",
+    "getCurReq",
+    "setCurReq",
+    "getBusinessConf",
+    "setBusinessConf",
+    "getExecuteStartTime",
+    "setExecuteStartTime"
+  ],
+  "CandidateMiddleResultsManager": [
+    "appendResult",
+    "resultsByType",
+    "getMiddleResults",
+    "setMiddleResults"
+  ]
+}

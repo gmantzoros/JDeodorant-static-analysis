@@ -1,0 +1,22 @@
+{
+  "BodyHandling": [
+    "putBodyParameter",
+    "putBodyParameters",
+    "setRequestBody"
+  ],
+  "HeaderAndEncoding": [
+    "putHeader",
+    "setEncType"
+  ],
+  "RequestDuplication": [
+    "setPaths",
+    "setMethods",
+    "setBasePaths",
+    "duplicateRequests"
+  ],
+  "PathAndQueryProcessing": [
+    "setPath",
+    "putQueryParameter",
+    "addPathParameter"
+  ]
+}

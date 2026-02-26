@@ -1,0 +1,10 @@
+{
+"source_type_name": "SettingsVisitSensitivityController",
+"candidates": [
+  {
+    "methods": ["visitSensitivitySettings", "startRecalculation", "dismissRecalculation", "saveConfiguration", "deleteConfiguration", "validateConfiguration", "editConfiguration", "clearTimeRange", "calculateNeedsConfiguration"]
+  },
+  {
+    "methods": ["visitSensitivitySettings", "startRecalculation", "dismissRecalculation", "saveConfiguration", "deleteConfiguration", "validateConfiguration"]
+  }
+]}

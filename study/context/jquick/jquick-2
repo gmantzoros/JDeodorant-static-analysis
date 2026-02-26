@@ -1,0 +1,4 @@
+{
+"VariableHierarchyUpdater": ["addVariable", "getVariable", "updateVariableWithAllScopes"],
+"ScopeVariableRegistry": ["addScopeVariable"]
+}

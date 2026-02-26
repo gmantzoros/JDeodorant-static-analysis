@@ -1,0 +1,13 @@
+{
+  "ProcessingTriggerScheduler": [
+    "scheduleProcessingTrigger",
+    "isIdle"
+  ],
+  "LifecycleController": [
+    "shutdown"
+  ],
+  "BatchIngestionHandler": [
+    "processBatch",
+    "scheduleProcessingTrigger"
+  ]
+}

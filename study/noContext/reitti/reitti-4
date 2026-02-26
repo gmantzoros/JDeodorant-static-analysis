@@ -1,0 +1,19 @@
+{
+  "ImageHandlingCandidate": [
+    "uploadImage",
+    "fetchImmichPhoto",
+    "getImmichPhotos"
+  ],
+  "ClusterBlockManagementCandidate": [
+    "updateClusterBlock",
+    "createClusterBlock"
+  ],
+  "TextBlockManagementCandidate": [
+    "createTextBlock",
+    "updateTextBlock"
+  ],
+  "ImageGalleryBlockManagementCandidate": [
+    "createImageGalleryBlock",
+    "updateImageGalleryBlock"
+  ]
+}

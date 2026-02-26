@@ -1,0 +1,10 @@
+{
+"source_type_name": "TransportationModesController",
+"candidates": [
+  {
+    "methods": ["addTransportMode", "updateTransportMode", "deleteTransportMode", "transportationModes", "getTransportationModesContent", "mphToKmh", "getAvailableModesToAdd"]
+  },
+  {
+    "methods": ["reclassifyTrips"]
+  }
+]}

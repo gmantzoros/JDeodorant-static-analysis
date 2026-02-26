@@ -1,0 +1,21 @@
+{
+  "ServerUrlBuilder": [
+    "calculateServerUrl",
+    "getGpsLoggerProperties"
+  ],
+  "ImmichIntegrationHandler": [
+    "getPhotosContent",
+    "saveImmichIntegration",
+    "testImmichConnection"
+  ],
+  "OwnTracksRecorderIntegrationHandler": [
+    "saveOwnTracksRecorderIntegration",
+    "testOwnTracksRecorderConnection",
+    "deleteOwnTracksRecorderIntegration",
+    "loadOwnTracksRecorderHistoricalData"
+  ],
+  "DataQualityAnalyzer": [
+    "getDataQualityContent",
+    "generateDataQualityReport"
+  ]
+}

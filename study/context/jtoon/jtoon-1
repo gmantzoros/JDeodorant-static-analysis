@@ -1,0 +1,12 @@
+{
+  "CandidateArrayTypeChecks": [
+    "isArrayOfPrimitivesTestWithObjectNode",
+    "isArrayOfArraysTestWithObjectNode",
+    "isArrayOfObjectsTestWithObjectNode"
+  ],
+  "CandidatePrimitiveAndNestedArrayEncoding": [
+    "encodeArrayWithAllPrimitives",
+    "encodeArrayWithAllPrimitivesArrayOfArrays",
+    "givenArrayOfArraysWithMixedInnerTypes_whenEncodePrivate_thenWritesExpected"
+  ]
+}

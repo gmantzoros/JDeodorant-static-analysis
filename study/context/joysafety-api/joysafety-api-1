@@ -1,0 +1,5 @@
+{
+  "OpenAIConfCluster": ["initOpenaiConf", "streamBusiness", "openaiRequestBizs"],
+  "IgnoreConfCluster": ["tradeSecConf", "ignore"],
+  "HistoryIgnoreCluster": ["init", "historyIgnore"]
+}

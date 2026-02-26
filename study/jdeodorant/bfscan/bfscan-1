@@ -1,0 +1,25 @@
+{
+"source_type_name": "HTTPRequestProcessor",
+"candidates": [
+  {
+    "methods": ["processMethod", "processMethodAnnotations", "processMethodParameters", "getLocalVars", "processMethodArgs", "getCodeVar", "processMethodArg", "processAnnotatedArg", "processUnannotatedArg"]
+  },
+  {
+    "methods": ["processMethodArg", "processAnnotatedArg", "processUnannotatedArg"]
+  },
+  {
+    "methods": ["processMethod", "processMethodAnnotations", "processMethodParameters", "getLocalVars", "processMethodArgs", "getCodeVar"]
+  },
+  {
+    "methods": ["processMethod", "processMethodAnnotations", "processMethodParameters", "getLocalVars"]
+  },
+  {
+    "methods": ["writeHeader", "writeOutput"]
+  },
+  {
+    "methods": ["processClasses", "writeHeader", "writeOutput", "addOpenApiTag", "processRequestsFromRes", "processClassAnnotations", "processClassMethod", "processHttpMethods", "buildRequests", "writeRequest", "processClassMethods", "processClass"]
+  },
+  {
+    "methods": ["processClasses", "writeHeader", "writeOutput", "addOpenApiTag", "processRequestsFromRes", "processClassAnnotations", "processClassMethod", "processHttpMethods", "buildRequests", "writeRequest", "processClassMethods"]
+  }
+]}

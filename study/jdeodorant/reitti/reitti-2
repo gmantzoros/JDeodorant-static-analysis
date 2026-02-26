@@ -1,0 +1,10 @@
+{
+"source_type_name": "ImportBatchProcessor",
+"candidates": [
+  {
+    "methods": ["scheduleProcessingTrigger", "shutdown", "isIdle"]
+  },
+  {
+    "methods": ["scheduleProcessingTrigger", "shutdown"]
+  }
+]}
