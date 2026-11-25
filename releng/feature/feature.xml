@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="gr.uom.java.jdeodorant.feature"
+      label="JDeodorant"
+      version="5.0.85">
+
+   <description>
+      JDeodorant refactoring opportunity detection, with a headless batch runner.
+   </description>
+
+   <plugin
+         id="gr.uom.java.jdeodorant"
+         version="0.0.0"/>
+
+</feature>

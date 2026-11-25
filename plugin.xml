@@ -275,5 +275,25 @@
          </action>
       </objectContribution>
    </extension>
+   <extension
+         id="batch"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            cardinality="singleton-global"
+            thread="any"
+            visible="true">
+         <run
+               class="gr.uom.java.jdeodorant.batch.BatchApplication">
+         </run>
+      </application>
+   </extension>
+   <extension
+         id="batchProduct"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="gr.uom.java.jdeodorant.batch"
+            name="JDeodorant Batch">
+      </product>
+   </extension>
 
 </plugin>

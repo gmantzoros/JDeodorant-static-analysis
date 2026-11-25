@@ -4,6 +4,50 @@ This is a fork of [JDeodorant](https://github.com/tsantalis/JDeodorant), based o
 
 The tag `thesis-final` (commit `46cdb9e5`) marks the exact code and data used for a pilot study (October 2025 – February 2026). That study compared LLM Extract Class suggestions, made with and without this context, against JDeodorant's candidates.
 
+## Batch runner
+
+The `batch-runner` branch adds a command-line version of JDeodorant. It analyses a whole project without the Eclipse UI and writes every God Class, Feature Envy and Long Method suggestion to a JSON file.
+
+**Build** (needs JDK 21 and Maven 3.9; no Eclipse IDE):
+
+```
+mvn -B -f releng/pom.xml clean verify
+```
+
+This produces a runnable headless Eclipse for Windows and Linux in `releng/product/target/products/`. The archives are `jdeodorant.batch-win32.win32.x86_64.zip` and `jdeodorant.batch-linux.gtk.x86_64.tar.gz`.
+
+**Run** with an empty workspace folder each time:
+
+```
+jdeodorant-batchc -data <empty folder> --project <project folder> --out result.json
+```
+
+- Use `jdeodorant-batchc.exe` on Windows (console version) and `jdeodorant-batch` on Linux.
+- Java 21 must be on the PATH.
+- For a Maven project, the runner calls `mvn dependency:build-classpath` to find the library jars, so Maven must be on the PATH too. Or pass the jars with `--classpath-file`.
+- Nothing is written into the analysed project.
+- Run with `--help` for all options: source folders, Java level, which detectors, and preference overrides.
+
+**Exit codes:** 0 ok, 1 bad arguments, 2 project import failed, 3 the project doesn't compile, 4 internal error. With exit code 3, the JSON lists the compile errors.
+
+**Output.** The JSON records:
+- the JDeodorant, JDT and Java versions;
+- every JDeodorant preference used;
+- the project's git commit;
+- a summary.
+
+It then lists the candidates of each detector:
+- `god_class`: one entry per class, with ranked Extract Class candidates (methods with signatures and lines, fields, dependency counts) and JDeodorant's concept groups.
+- `feature_envy`: ranked Move Method candidates with source and target class.
+- `long_method`: Extract Method slice groups per method and variable, with the line ranges of the extracted statements.
+
+The detection code mirrors the plug-in's views rather than `gr.uom.java.ast.Standalone`. Standalone keeps results in sorted sets that can drop distinct candidates which compare as equal.
+
+**Known limits:**
+- Single-module Maven projects or plain source folders only; no Gradle or multi-module support yet.
+- No annotation processing, so Lombok projects don't compile.
+- Long Method is slow: about 3 minutes for 450 methods.
+
 ## What this fork adds
 
 Detection algorithms and parser settings are unchanged from upstream. The additions are:
