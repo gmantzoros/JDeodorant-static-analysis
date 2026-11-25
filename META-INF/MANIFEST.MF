@@ -20,6 +20,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.jdt.core.manipulation
 Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Import-Package: org.eclipse.jdt.core.refactoring
 Export-Package: ca.concordia.jdeodorant.clone.parsers,
  gr.uom.java.ast,
